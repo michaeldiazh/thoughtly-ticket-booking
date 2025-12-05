@@ -6,7 +6,7 @@
 
 import { Request, Response } from 'express';
 import { APIResponse, GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema } from '../../domain/dtos';
-import { TicketResponse } from '../../domain/dtos/get-tickets-response.dto';
+import { SimplifiedTicket } from '../../domain/dtos/simplified-ticket.dto';
 import { handleError, stringifyQueryParams } from '../utils';
 import { Validator } from '../../domain/validator/validator.interface';
 import { createZodValidator } from '../../domain/validator/zod-validator.factory';
@@ -26,10 +26,10 @@ export class TicketController {
       const queryParams = this.parseQueryParams(req.query);
       
       // TODO: Call ticket service to get tickets
-      // const result = await this.ticketService.getTickets(queryParams);
+      // const result = await this.ticketService.getAllAvailableTickets(queryParams);
       
       // Placeholder response for now
-      const response: APIResponse<TicketResponse[]> = {
+      const response: APIResponse<SimplifiedTicket[]> = {
         status: 'OK',
         data: [],
         perPage: queryParams.limit,

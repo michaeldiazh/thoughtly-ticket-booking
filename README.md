@@ -86,6 +86,7 @@ thoughtly-ticket-booking/
 
 - ✅ **TBS-1**: Initial project setup (Node.js 16 + TypeScript)
 - ✅ **TBS-2**: Adding database documentation for Ticket Booking System
+- ✅ **TBS-3**: Building API contract between frontend and backend
 - 🚧 Implementation in progress.
 
 ## Design Decisions & Trade-offs

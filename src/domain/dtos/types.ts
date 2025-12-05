@@ -23,6 +23,7 @@ export interface ErrorResponse<E extends Exception> {
 
 /**
  * Paginated data structure for list responses
+ * Helper type for internal use
  */
 export interface PaginatedData<T> {
   data: T[];
@@ -33,10 +34,14 @@ export interface PaginatedData<T> {
 
 /**
  * Paginated success response with status OK
+ * Has data, perPage, offset, and total at the same level as status
  */
 export interface SucceededPaginatedResponse<T> {
   status: 'OK';
-  data: PaginatedData<T>;
+  data: T[];
+  perPage: number;
+  offset: number;
+  total: number;
 }
 
 /**

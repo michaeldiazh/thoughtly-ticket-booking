@@ -5,15 +5,7 @@
  */
 
 import { GetTicketsQuery, SimplifiedTicket } from '../../../domain/dtos';
-import { QueryFilterMap, OrderByConfig, QueryResult } from '../../types';
-
-/**
- * Data structure for building WHERE clause conditions and parameters
- */
-export interface WhereParameterData {
-  conditions: string[];
-  params: any[];
-}
+import { QueryFilterMap, OrderByConfig, QueryResult, WhereParameterData } from '../../types';
 
 /**
  * Build COUNT query for tickets
@@ -46,8 +38,7 @@ export function buildAvailableTicketsSelectQuery(
   orderBy?: OrderByConfig<SimplifiedTicket>[]
 ): QueryResult {
   const whereParameterData: WhereParameterData = buildAvailableTicketsWhereClause(query);
-  const limit = query.limit || 10;
-  const offset = query.offset || 0;
+  const {limit, offset} = query;
   return {
     sql: buildSelectSql(whereParameterData, orderBy),
     params: [...whereParameterData.params, limit, offset],

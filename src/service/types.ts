@@ -36,3 +36,11 @@ export interface QueryResult {
   params: any[];
 }
 
+/**
+ * Data structure for building WHERE clause conditions and parameters
+ */
+export interface WhereParameterData {
+  conditions: string[];
+  params: any[];
+}
+

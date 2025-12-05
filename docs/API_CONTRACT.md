@@ -148,10 +148,34 @@ GET /api/v1/ticket?tierCodes=VIP&limit=5&offset=0
   "status": "ERROR",
   "error": {
     "code": "INVALID_QUERY_PARAMETER",
-    "message": "Invalid date format for eventStartDate",
+    "message": "Invalid query parameter: eventStartDate",
     "details": {
-      "parameter": "eventStartDate",
-      "expectedFormat": "ISO 8601 (YYYY-MM-DDTHH:mm:ssZ)"
+      "eventStartDate": {
+        "issue": "Invalid date format",
+        "detail": "Expected ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"
+      }
+    }
+  }
+}
+```
+
+**Error (400 Bad Request) - Multiple parameter validation errors:**
+
+```json
+{
+  "status": "ERROR",
+  "error": {
+    "code": "INVALID_QUERY_PARAMETER",
+    "message": "Invalid query parameters: eventStartDate, limit",
+    "details": {
+      "eventStartDate": {
+        "issue": "Invalid date format",
+        "detail": "Expected ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"
+      },
+      "limit": {
+        "issue": "must be a positive number",
+        "detail": -5
+      }
     }
   }
 }
@@ -320,10 +344,34 @@ Book tickets for a user.
   "status": "ERROR",
   "error": {
     "code": "INVALID_REQUEST",
-    "message": "Invalid request parameters",
+    "message": "Invalid request parameter: quantity",
     "details": {
-      "field": "quantity",
-      "issue": "Quantity must be greater than 0"
+      "quantity": {
+        "issue": "must be greater than 0",
+        "detail": -1
+      }
+    }
+  }
+}
+```
+
+**Error (400 Bad Request) - Multiple field validation errors:**
+
+```json
+{
+  "status": "ERROR",
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid request parameters: quantity, ticketId",
+    "details": {
+      "quantity": {
+        "issue": "must be greater than 0",
+        "detail": -1
+      },
+      "ticketId": {
+        "issue": "must be a number",
+        "detail": "invalid"
+      }
     }
   }
 }
@@ -412,10 +460,12 @@ GET /api/v1/event?venueName=Madison&limit=5&offset=0
   "status": "ERROR",
   "error": {
     "code": "INVALID_QUERY_PARAMETER",
-    "message": "Invalid date format for eventStartDate",
+    "message": "Invalid query parameter: eventStartDate",
     "details": {
-      "parameter": "eventStartDate",
-      "expectedFormat": "ISO 8601 (YYYY-MM-DDTHH:mm:ssZ)"
+      "eventStartDate": {
+        "issue": "Invalid date format",
+        "detail": "Expected ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"
+      }
     }
   }
 }

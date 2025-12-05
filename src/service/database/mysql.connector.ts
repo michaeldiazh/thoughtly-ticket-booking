@@ -43,7 +43,7 @@ export class MySQLConnector {
    * Execute a query with automatic connection management
    */
   async query<T = any>(sql: string, params?: any[]): Promise<T[]> {
-    const [rows] = await this.pool.execute(sql, params);
+    const [rows] = await this.pool.execute(sql, params || []);
     return rows as T[];
   }
 

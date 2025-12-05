@@ -24,6 +24,10 @@ describe('buildAvailableTicketsCountQuery', () => {
     expect(result.sql).toContain('INNER JOIN venue v ON e.venue_id = v.id');
     expect(result.sql).not.toContain('WHERE');
     expect(result.params).toEqual([]);
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
 
@@ -42,6 +46,10 @@ describe('buildAvailableTicketsCountQuery', () => {
     expect(result.sql).toContain('t.id IN (?,?,?)');
     expect(result.sql).toContain('e.name LIKE ?');
     expect(result.params).toEqual([1, 2, 3, '%Concert%']);
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should use correct WHERE clause conditions order', () => {
@@ -59,6 +67,10 @@ describe('buildAvailableTicketsCountQuery', () => {
     expect(result.sql).toContain('t.tier_code IN (?)');
     expect(result.sql).toContain('e.name LIKE ?');
     expect(result.params).toEqual([1, 'GA', '%Test%']);
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should build COUNT query with no WHERE clause when query has only limit and offset', () => {
@@ -78,6 +90,10 @@ describe('buildAvailableTicketsCountQuery', () => {
     const afterJoinText = sql.substring(afterJoinIndex + 'INNER JOIN venue v ON e.venue_id = v.id'.length).trim();
     expect(afterJoinText).not.toContain('WHERE');
     expect(result.params).toEqual([]);
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 });
 
@@ -101,6 +117,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     expect(result.sql).toContain('LIMIT ? OFFSET ?');
     expect(result.sql).not.toContain('WHERE');
     expect(result.params).toEqual([10, 0]);
+    
+    // Verify placeholder count matches params length (LIMIT ? OFFSET ? = 2 placeholders)
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
 
@@ -118,6 +138,11 @@ describe('buildAvailableTicketsSelectQuery', () => {
     expect(result.sql).toContain('t.id IN (?,?)');
     expect(result.sql).toContain('e.name LIKE ?');
     expect(result.params).toEqual([1, 2, '%Concert%', 5, 10]);
+    
+    // Verify placeholder count matches params length
+    // WHERE clause: t.id IN (?,?) = 2, e.name LIKE ? = 1, LIMIT ? OFFSET ? = 2, total = 5
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should use provided limit and offset', () => {
@@ -130,6 +155,11 @@ describe('buildAvailableTicketsSelectQuery', () => {
     const result = buildAvailableTicketsSelectQuery(query);
 
     expect(result.params).toEqual([1, 5, 2]);
+    
+    // Verify placeholder count matches params length
+    // WHERE: t.id IN (?) = 1, LIMIT ? OFFSET ? = 2, total = 3
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should include all SELECT columns', () => {
@@ -149,6 +179,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     expect(result.sql).toContain('v.city as venueCity');
     expect(result.sql).toContain('v.country_code as venueCountryCode');
     expect(result.sql).toContain('DATE_FORMAT(e.start_time');
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should handle all filters together', () => {
@@ -172,6 +206,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     expect(result.params.length).toBe(12);
     expect(result.params[result.params.length - 2]).toBe(20); // limit
     expect(result.params[result.params.length - 1]).toBe(5); // offset
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should use default orderBy when not provided', () => {
@@ -183,6 +221,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     const result = buildAvailableTicketsSelectQuery(query);
 
     expect(result.sql).toContain('ORDER BY e.start_time ASC, t.id ASC');
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should use custom orderBy when provided', () => {
@@ -198,6 +240,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     const result = buildAvailableTicketsSelectQuery(query, orderBy);
 
     expect(result.sql).toContain('ORDER BY t.price DESC, t.remaining ASC');
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should handle single orderBy field', () => {
@@ -212,6 +258,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
     const result = buildAvailableTicketsSelectQuery(query, orderBy);
 
     expect(result.sql).toContain('ORDER BY e.name ASC');
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should handle empty orderBy array by using default', () => {
@@ -225,6 +275,10 @@ describe('buildAvailableTicketsSelectQuery', () => {
 
     // Empty array should fall back to default
     expect(result.sql).toContain('ORDER BY e.start_time ASC, t.id ASC');
+    
+    // Verify placeholder count matches params length
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 
   it('should build SELECT query with no WHERE clause when query has only limit and offset', () => {
@@ -246,5 +300,9 @@ describe('buildAvailableTicketsSelectQuery', () => {
     expect(betweenJoinAndOrderBy).not.toContain('WHERE');
     expect(betweenJoinAndOrderBy).toBe('');
     expect(result.params).toEqual([10, 0]);
+    
+    // Verify placeholder count matches params length (LIMIT ? OFFSET ? = 2 placeholders)
+    const placeholderCount = (result.sql.match(/\?/g) || []).length;
+    expect(placeholderCount).toBe(result.params.length);
   });
 });

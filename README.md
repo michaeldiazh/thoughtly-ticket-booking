@@ -43,6 +43,17 @@ npm run dev
 npm start
 ```
 
+### Running the Service
+
+Once the service is running (in development or production mode), you can test the API endpoints. The server runs on `http://localhost:3000` by default.
+
+**Example: Get all available tickets**
+```bash
+curl -X GET "http://localhost:3000/api/v1/ticket" -H "Content-Type: application/json"
+```
+
+For complete API documentation including all endpoints, request/response formats, and query parameters, see [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
+
 ## Project Structure
 
 ```

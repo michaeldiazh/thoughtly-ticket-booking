@@ -2,22 +2,18 @@
  * DTOs for GET /tickets endpoint
  */
 
-import { VenueResponse } from './common.dto';
-
 /**
- * Individual ticket information
+ * Simplified ticket information for listing
  */
 export interface TicketResponse {
   id: number;
-  eventId: number;
   eventName: string;
-  tierCode: string;
   tierDisplayName: string;
-  capacity: number;
   remaining: number;
   price: number;
-  venue: VenueResponse;
+  venueName: string;
+  venueCity: string;
+  venueCountryCode: string;
   eventStartTime: string; // ISO 8601 format
-  eventEndTime: string; // ISO 8601 format
 }
 

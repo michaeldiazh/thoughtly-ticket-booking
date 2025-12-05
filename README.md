@@ -133,6 +133,12 @@ This approach ensures that:
   - The `remaining >= :qty` condition ensures we never go below zero
   - Wrapping in a transaction ensures that if the booking fails (e.g., payment simulation fails), the ticket count can be rolled back
 
+### API Response Structure
+
+Paginated responses are designed with `data`, `perPage`, `offset`, and `total` at the same level as `status` (not nested). This flat structure improves frontend consumption by avoiding unnecessary nesting, reduces payload size, and provides a consistent API contract that matches TypeScript DTOs. The structure `{ status: "OK", data: [...], perPage, offset, total }` ensures type safety and simplifies client-side pagination logic.
+
+For complete API documentation including all endpoints, request/response formats, and error codes, see [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
+
 ## License
 
 ISC

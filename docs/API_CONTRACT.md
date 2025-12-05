@@ -117,22 +117,14 @@ GET /api/v1/ticket?tierCodes=VIP&limit=5&offset=0
   "data": [
     {
       "id": 1,
-      "eventId": 5,
       "eventName": "Summer Concert",
-      "tierCode": "VIP",
       "tierDisplayName": "VIP",
-      "capacity": 100,
       "remaining": 45,
       "price": 100.00,
-      "venue": {
-        "id": 2,
-        "name": "Madison Square Garden",
-        "city": "New York",
-        "countryCode": "US",
-        "timezone": "America/New_York"
-      },
-      "eventStartTime": "2024-07-15T19:00:00Z",
-      "eventEndTime": "2024-07-15T22:00:00Z"
+      "venueName": "Madison Square Garden",
+      "venueCity": "New York",
+      "venueCountryCode": "US",
+      "eventStartTime": "2024-07-15T19:00:00Z"
     }
   ],
   "perPage": 10,
@@ -182,11 +174,13 @@ GET /api/v1/ticket?tierCodes=VIP&limit=5&offset=0
 ```
 
 **Notes:**
+- Returns simplified ticket information optimized for browsing and listing
+- For complete ticket details including event and venue information, use GET /api/v1/ticket/:id
 - All query parameters are optional
 - Multiple filters can be combined (AND logic)
 - Date ranges are inclusive
 - Pagination: `limit` defaults to 10, `offset` defaults to 0
-- Empty result returns `200 OK` with empty `tickets` array
+- Empty result returns `200 OK` with empty `data` array
 
 ### GET /ticket/:id
 
@@ -442,9 +436,9 @@ GET /api/v1/event?venueName=Madison&limit=5&offset=0
       "description": "An amazing summer concert experience",
       "startTime": "2024-07-15T19:00:00Z",
       "endTime": "2024-07-15T22:00:00Z",
+      "venueId": 2,
       "venueName": "Madison Square Garden",
-      "venueCity": "New York",
-      "venueCountryCode": "US"
+      "venueCity": "New York"
     }
   ],
   "perPage": 10,
@@ -473,7 +467,7 @@ GET /api/v1/event?venueName=Madison&limit=5&offset=0
 
 **Notes:**
 - Returns paginated list of events with basic information for browsing
-- Venue information is simplified to name, city, and country code
+- Venue information is simplified to id, name, and city
 - All query parameters are optional
 - Multiple filters can be combined (AND logic)
 - Date ranges are inclusive

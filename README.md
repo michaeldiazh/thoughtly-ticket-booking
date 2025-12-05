@@ -88,6 +88,7 @@ thoughtly-ticket-booking/
 - ✅ **TBS-2**: Adding database documentation for Ticket Booking System
 - ✅ **TBS-3**: Building API contract between frontend and backend
 - ✅ **TBS-3.1**: Add venue country code to basic event information endpoint
+- ✅ **TBS-3.2**: Simplify ticket listing response for better performance
 - 🚧 Implementation in progress.
 
 ## Design Decisions & Trade-offs

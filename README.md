@@ -49,6 +49,7 @@ npm start
 thoughtly-ticket-booking/
 ├── src/              # TypeScript source files
 ├── dist/             # Compiled JavaScript (generated)
+├── docs/             # Documentation and database schema
 ├── package.json      # Dependencies and scripts
 ├── tsconfig.json     # TypeScript configuration
 └── README.md         # This file
@@ -83,11 +84,53 @@ thoughtly-ticket-booking/
 
 ## Development Status
 
-🚧 Project setup complete. Implementation in progress.
+- ✅ **TBS-1**: Initial project setup (Node.js 16 + TypeScript)
+- ✅ **TBS-2**: Adding database documentation for Ticket Booking System
+- 🚧 Implementation in progress.
 
 ## Design Decisions & Trade-offs
 
-_To be documented as implementation progresses._
+### Database Schema
+
+![Event Booking ERD](docs/event-booking-erd.jpg)
+
+The database schema is defined for MySQL 8.4 and includes the following entities:
+
+- **venue**: Stores venue information (name, address, location, timezone)
+- **user**: Stores user information (name, address, location, timezone)
+- **event**: Stores event information linked to venues
+- **price_tier**: Defines ticket pricing tiers (GA, Front Row, VIP)
+- **ticket**: Stores ticket availability and pricing per event and tier
+- **user_ticket**: Stores user bookings/purchases
+
+The complete database schema SQL can be found in [`docs/schema.sql`](docs/schema.sql).
+
+#### Notes & Acknowledgements
+
+- **Normalization**: The schema follows Third Normal Form (3NF) / Boyce-Codd Normal Form (BCNF) to ensure data integrity and eliminate redundancy.
+- **Historical Data Preservation**: The `user_ticket.unit_price` field stores the price at the time of purchase, preserving historical pricing even if ticket prices change.
+- **Event-Specific Pricing**: The `ticket.price` field allows for event-specific pricing that may differ from the `price_tier.default_price`, enabling flexible pricing strategies.
+- **Concurrency Control**: Using atomic updates on the `ticket` table prevents two users from accessing the same ticket type simultaneously. The following SQL query locks the ticket row such that two users cannot update the same ticket type:
+
+```sql
+BEGIN TRANSACTION;
+
+update ticket
+   set remaining = remaining - :qty
+where id = :ticketId AND remaining >= :qty;
+
+-- Check affectedRows before committing
+-- If affectedRows = 0, rollback the transaction
+-- ...
+COMMIT;
+```
+
+This approach ensures that:
+  - The transaction provides isolation, ensuring the update is atomic and consistent
+  - The row-level lock prevents concurrent updates to the same ticket row
+  - If the number of remaining tickets reaches zero, `affectedRows = 0` on one of the concurrent requests prevents any change to the ticket count
+  - The `remaining >= :qty` condition ensures we never go below zero
+  - Wrapping in a transaction ensures that if the booking fails (e.g., payment simulation fails), the ticket count can be rolled back
 
 ## License
 

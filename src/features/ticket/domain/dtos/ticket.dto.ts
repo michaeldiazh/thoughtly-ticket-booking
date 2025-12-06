@@ -3,7 +3,8 @@
  */
 
 import { z } from 'zod';
-import { BaseEventFields, VenueDetailResponse } from '../../../../domain/common.dto';
+import { SimplifiedEvent } from '../../../event/domain/dtos/simplified-event.dto';
+import { VenueDetailResponse } from '../../../../domain/common.dto';
 import { InvalidRequestError, FieldIssues } from '../../../../domain/errors';
 import { preprocessToPositiveFloat } from '../../../../shared/validator';
 
@@ -114,6 +115,6 @@ export const ticketErrorConverter = (error: z.ZodError | Error): Error => {
 /**
  * Event information with nested venue details
  */
-export interface EventDetailResponse extends BaseEventFields {
+export interface EventDetailResponse extends SimplifiedEvent {
   venue: VenueDetailResponse;
 }

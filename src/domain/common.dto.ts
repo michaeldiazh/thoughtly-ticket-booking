@@ -4,17 +4,6 @@ import { ErrorResponse, Exception, SucceededPaginatedResponse, SucceededSingleRe
  */
 
 /**
- * Base event fields shared across all event responses
- */
-export interface BaseEventFields {
-  id: number;
-  name: string;
-  description: string | null;
-  startTime: string; // ISO 8601 format
-  endTime: string; // ISO 8601 format
-}
-
-/**
  * Simplified venue information
  */
 export interface VenueResponse {

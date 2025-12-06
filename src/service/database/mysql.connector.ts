@@ -41,18 +41,35 @@ export class MySQLConnector {
 
   /**
    * Execute a query with automatic connection management
+   * Uses query() instead of execute() to handle dynamic IN clauses properly
+   * mysql2's query() uses mysql.format() internally which handles arrays correctly
    */
   async query<T = any>(sql: string, params?: any[]): Promise<T[]> {
-    const [rows] = await this.pool.execute(sql, params || []);
-    return rows as T[];
+    const connection = await this.getConnection();
+    try {
+      // Use query() instead of execute() for better support of dynamic IN clauses
+      // query() uses mysql.format() internally which properly handles arrays
+      const [result] = await connection.query(sql, params || []);
+      return result as T[];
+    } finally {
+      connection.release();
+    }
   }
 
   /**
    * Execute a query and return the first row
+   * Uses query() instead of execute() to handle dynamic IN clauses properly
    */
   async queryOne<T = any>(sql: string, params?: any[]): Promise<T | null> {
-    const rows = await this.query<T>(sql, params);
-    return rows.length > 0 ? rows[0] : null;
+    const connection = await this.getConnection();
+    try {
+      // Use query() instead of execute() for better support of dynamic IN clauses
+      const [result] = await connection.query(sql, params || []);
+      const rows = result as T[];
+      return rows.length > 0 ? rows[0] : null;
+    } finally {
+      connection.release();
+    }
   }
 
   /**

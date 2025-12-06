@@ -10,10 +10,11 @@ import { SimplifiedTicket } from '../../domain/dtos/simplified-ticket.dto';
 import { handleError, stringifyQueryParams } from '../utils';
 import { Validator } from '../../domain/validator/validator.interface';
 import { createZodValidator } from '../../domain/validator/zod-validator.factory';
+import { TicketService } from '../../service/ticket.service';
 
 export class TicketController {
     private getTicketsValidator: Validator<GetTicketsQuery>;
-    constructor(){
+    constructor(private readonly ticketService: TicketService){
         this.getTicketsValidator = createZodValidator<GetTicketsQuery>(GetTicketsQuerySchema, getTicketsQueryErrorConverter);
     }
   /**
@@ -25,16 +26,15 @@ export class TicketController {
       // Parse and validate query parameters
       const queryParams = this.parseQueryParams(req.query);
       
-      // TODO: Call ticket service to get tickets
-      // const result = await this.ticketService.getAllAvailableTickets(queryParams);
+      // Call ticket service to get tickets
+      const result = await this.ticketService.getAllAvailableTickets(queryParams);
       
-      // Placeholder response for now
       const response: APIResponse<SimplifiedTicket[]> = {
         status: 'OK',
-        data: [],
+        data: result.tickets,
         perPage: queryParams.limit,
         offset: queryParams.offset,
-        total: 0,
+        total: result.total,
       };
       
       res.status(200).json(response);

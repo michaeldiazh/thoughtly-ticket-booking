@@ -7,15 +7,21 @@
 import express, { Router } from 'express';
 import { TicketController } from '../controllers/ticket.controller';
 
-const router: Router = express.Router();
-const ticketController = new TicketController();
-
 /**
- * GET /api/v1/ticket
- * Get all available tickets with optional filtering
+ * Create ticket routes with dependency injection
+ * @param ticketController - The ticket controller instance
+ * @returns Express router with ticket routes
  */
-router.get('/', async (req, res) => {
-  await ticketController.getTickets(req, res);
-});
+export function createTicketRoutes(ticketController: TicketController): Router {
+  const router: Router = express.Router();
 
-export default router;
+  /**
+   * GET /api/v1/ticket
+   * Get all available tickets with optional filtering
+   */
+  router.get('/', async (req, res) => {
+    await ticketController.getTickets(req, res);
+  });
+
+  return router;
+}

@@ -403,6 +403,7 @@ Get all events with optional filtering. Returns basic event information for brow
 
 | Parameter | Type | Description | Example |
 |-----------|------|-------------|---------|
+| `eventIds` | string[] | Comma-separated list of event IDs | `?evnetIds=1,2,3` |
 | `venueName` | string | Filter by venue name (partial match) | `?venueName=Madison Square` |
 | `venueCountryCode` | string | Filter by venue country code (4 characters) | `?venueCountryCode=US` |
 | `eventName` | string | Filter by event name (partial match) | `?eventName=Concert` |
@@ -513,16 +514,19 @@ Get a single event by ID with complete details including tier availability infor
     "tiers": {
       "VIP": {
         "ticketId": 1,
+        "price": 10.00,
         "remaining": 45,
         "capacity": 100
       },
       "FRONT_ROW": {
         "ticketId": 2,
+        "price": 12.00,
         "remaining": 20,
         "capacity": 50
       },
       "GA": {
         "ticketId": 3,
+        "price": 2.00,
         "remaining": 200,
         "capacity": 500
       }

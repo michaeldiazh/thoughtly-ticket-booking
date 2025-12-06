@@ -5,5 +5,5 @@
  * Bootstraps the server for backward compatibility with existing scripts
  */
 
-import './server';
+import './app/server';
 

@@ -5,7 +5,7 @@
  */
 
 import { createApp } from './app';
-import { getServerPort } from './app/config/server.config';
+import { getServerPort } from './config/server.config';
 
 // Load environment variables
 import 'dotenv/config';

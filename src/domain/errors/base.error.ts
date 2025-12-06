@@ -2,7 +2,7 @@
  * Base Error Classes and Interfaces
  */
 
-import { Exception } from '../dtos/types';
+import { Exception } from '../types';
 
 /**
  * Interface for errors that can be converted to Exception for API responses

@@ -5,7 +5,8 @@
  */
 
 import { Response } from 'express';
-import { APIResponse, buildErrorResponse } from '../../domain/dtos';
+import { APIResponse } from '../../domain/types';
+import { buildErrorResponse } from '../../domain/common.dto';
 import {
   AppError,
   InvalidQueryParameterError,

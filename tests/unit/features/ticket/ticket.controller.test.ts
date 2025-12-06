@@ -14,7 +14,7 @@ jest.mock('../../../../src/shared/utils', () => ({
   handleError: jest.fn(),
 }));
 
-jest.mock('../../../../src/features/ticket/ticket.service');
+jest.mock('../../../../../src/features/ticket/ticket.service');
 
 const mockHandleError = handleError as jest.MockedFunction<typeof handleError>;
 

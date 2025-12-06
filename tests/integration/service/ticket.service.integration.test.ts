@@ -17,19 +17,6 @@ describe('TicketService Integration Tests', () => {
     ticketService = new TicketService(db);
   });
 
-  beforeEach(async () => {
-    // Clean up tables before each test
-    await db.query('DELETE FROM user_ticket');
-    await db.query('DELETE FROM ticket');
-    await db.query('DELETE FROM event');
-    await db.query('DELETE FROM venue');
-    await db.query('DELETE FROM price_tier');
-    await db.query('DELETE FROM user');
-
-    // Reload test data from test_data.sql
-    await loadTestData(db);
-  });
-
   describe('getAllAvailableTickets', () => {
     it('should return all tickets when no filters applied', async () => {
       const query: GetTicketsQuery = {

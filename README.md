@@ -52,6 +52,11 @@ Once the service is running (in development or production mode), you can test th
 curl -X GET "http://localhost:3000/api/v1/ticket" -H "Content-Type: application/json"
 ```
 
+**Example: Get a single ticket by ID**
+```bash
+curl -X GET "http://localhost:3000/api/v1/ticket/1" -H "Content-Type: application/json"
+```
+
 For complete API documentation including all endpoints, request/response formats, and query parameters, see [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
 
 ## Project Structure
@@ -102,6 +107,7 @@ thoughtly-ticket-booking/
 - ✅ **TBS-3.2**: Simplify ticket listing response for better performance
 - ✅ **TBS-4**: Creating all available tickets endpoint with validation and testing infrastructure
 - ✅ **TBS-4.1**: Implemented Ticket Service with dependency injection, MySQL connector, and integration tests with testcontainers
+- ✅ **TBS-5**: Implemented GET /api/v1/ticket/:id endpoint with Zod validation and comprehensive testing
 - 🚧 Implementation in progress.
 
 ## Design Decisions & Trade-offs
@@ -158,11 +164,12 @@ For complete API documentation including all endpoints, request/response formats
 
 We use **Zod** (v3.22.4) for type-safe request validation on all API inputs. This approach provides several benefits:
 
-- **Type Safety**: Zod schemas generate TypeScript types, ensuring compile-time type checking and runtime validation match
+- **Type Safety**: Zod schemas generate TypeScript types using `z.infer<typeof Schema>`, ensuring compile-time type checking and runtime validation match
 - **Declarative Validation**: Validation rules are defined in a single schema, making them easy to read, maintain, and test
-- **Rich Error Messages**: Zod provides detailed validation errors that we convert to `InvalidQueryParameterError` with field-level issue details
+- **Rich Error Messages**: Zod provides detailed validation errors that we convert to `InvalidQueryParameterError` or `InvalidRequestError` with field-level issue details
 - **Schema Reusability**: Validation schemas are defined in DTOs alongside their TypeScript types, keeping validation logic close to the data structures
 - **Flexible Input Handling**: Our `stringifyQueryParams` utility normalizes Express query parameters (arrays, strings, numbers, booleans) before validation, supporting both comma-separated values (`?tierCodes=GA,VIP`) and multiple query params (`?tierCodes=GA&tierCodes=VIP`)
+- **Data Preprocessing**: Zod's `z.preprocess()` allows us to transform data before validation (e.g., parsing JSON strings from MySQL `JSON_OBJECT` results, converting string prices to numbers)
 
 The validation layer is abstracted through a `Validator<T>` interface and `createZodValidator` factory, allowing for easy extension to other validation libraries if needed in the future.
 

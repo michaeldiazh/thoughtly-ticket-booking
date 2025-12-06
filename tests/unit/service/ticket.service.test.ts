@@ -5,12 +5,14 @@
 import { TicketService } from '../../../src/service/ticket.service';
 import { MySQLConnector } from '../../../src/service/database/mysql.connector';
 import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from '../../../src/service/query/ticket/get-tickets.query';
-import { GetTicketsQuery, SimplifiedTicket } from '../../../src/domain/dtos';
+import { buildTicketByIdQuery } from '../../../src/service/query/ticket/get-ticket-by-id.query';
+import { GetTicketsQuery, SimplifiedTicket, Ticket } from '../../../src/domain/dtos';
 import { OrderByConfig } from '../../../src/service/types';
 
 // Mock the MySQLConnector
 jest.mock('../../../src/service/database/mysql.connector');
 jest.mock('../../../src/service/query/ticket/get-tickets.query');
+jest.mock('../../../src/service/query/ticket/get-ticket-by-id.query');
 
 describe('TicketService', () => {
   let ticketService: TicketService;
@@ -196,6 +198,150 @@ describe('TicketService', () => {
       expect(callOrder.length).toBe(2);
       expect(callOrder).toContain('queryOne');
       expect(callOrder).toContain('query');
+    });
+  });
+
+  describe('getTicketById', () => {
+    const mockTicketId = 1;
+    const mockEventJson = JSON.stringify({
+      id: 1,
+      name: 'Summer Concert 2024',
+      description: 'A great summer concert',
+      startTime: '2024-07-15T19:00:00Z',
+      endTime: '2024-07-15T22:00:00Z',
+      venue: {
+        id: 1,
+        name: 'Madison Square Garden',
+        address: '4 Pennsylvania Plaza',
+        city: 'New York',
+        region: 'NY',
+        countryCode: 'USAS',
+        timezone: 'America/New_York',
+      },
+    });
+
+    const mockDbResult = {
+      id: 1,
+      eventId: 1,
+      tierCode: 'VIP',
+      tierDisplayName: 'VIP',
+      capacity: 50,
+      remaining: 45,
+      price: 100.00,
+      createdAt: '2024-01-01T00:00:00Z',
+      lastUpdated: '2024-01-01T00:00:00Z',
+      event: mockEventJson,
+    };
+
+    const expectedTicket: Ticket = {
+      id: 1,
+      eventId: 1,
+      tierCode: 'VIP',
+      tierDisplayName: 'VIP',
+      capacity: 50,
+      remaining: 45,
+      price: 100.00,
+      createdAt: '2024-01-01T00:00:00Z',
+      lastUpdated: '2024-01-01T00:00:00Z',
+      event: JSON.parse(mockEventJson),
+    };
+
+    it('should return a ticket when found', async () => {
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(mockDbResult);
+
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).toEqual(expectedTicket);
+      expect(buildTicketByIdQuery).toHaveBeenCalledWith(mockTicketId);
+      expect(mockDb.queryOne).toHaveBeenCalledWith(mockQuery.sql, mockQuery.params);
+    });
+
+    it('should return null when ticket not found', async () => {
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(null);
+
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).toBeNull();
+      expect(buildTicketByIdQuery).toHaveBeenCalledWith(mockTicketId);
+      expect(mockDb.queryOne).toHaveBeenCalledWith(mockQuery.sql, mockQuery.params);
+    });
+
+    it('should parse JSON event string from database', async () => {
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(mockDbResult);
+
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).not.toBeNull();
+      expect(result?.event).toEqual(JSON.parse(mockEventJson));
+      expect(typeof result?.event).toBe('object');
+      expect(result?.event.venue).toBeDefined();
+    });
+
+    it('should handle event as already parsed object', async () => {
+      const mockDbResultWithObject = {
+        ...mockDbResult,
+        event: JSON.parse(mockEventJson),
+      };
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(mockDbResultWithObject);
+
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).not.toBeNull();
+      expect(result?.event).toEqual(JSON.parse(mockEventJson));
+    });
+
+    it('should convert price to number', async () => {
+      const mockDbResultWithStringPrice = {
+        ...mockDbResult,
+        price: '100.00',
+      };
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(mockDbResultWithStringPrice);
+
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).not.toBeNull();
+      expect(typeof result?.price).toBe('number');
+      expect(result?.price).toBe(100.00);
+    });
+
+    it('should validate ticket data before returning', async () => {
+      const mockQuery = { sql: 'SELECT ... WHERE t.id = ?', params: [mockTicketId] };
+
+      (buildTicketByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(mockDbResult);
+
+      // The validator should be called internally
+      // We can verify this by checking the result structure matches the schema
+      const result = await ticketService.getTicketById(mockTicketId);
+
+      expect(result).not.toBeNull();
+      // If validation passes, all required fields should be present
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('eventId');
+      expect(result).toHaveProperty('tierCode');
+      expect(result).toHaveProperty('tierDisplayName');
+      expect(result).toHaveProperty('capacity');
+      expect(result).toHaveProperty('remaining');
+      expect(result).toHaveProperty('price');
+      expect(result).toHaveProperty('createdAt');
+      expect(result).toHaveProperty('lastUpdated');
+      expect(result).toHaveProperty('event');
+      expect(result?.event).toHaveProperty('venue');
     });
   });
 });

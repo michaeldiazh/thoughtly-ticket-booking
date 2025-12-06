@@ -23,5 +23,13 @@ export function createTicketRoutes(ticketController: TicketController): Router {
     await ticketController.getTickets(req, res);
   });
 
+  /**
+   * GET /api/v1/ticket/:id
+   * Get a single ticket by ID with nested event and venue information
+   */
+  router.get('/:id', async (req, res) => {
+    await ticketController.getTicketById(req, res);
+  });
+
   return router;
 }

@@ -28,8 +28,8 @@ export class TicketService {
     total: number;
   }> {
     const [tickets, total] = await Promise.all([
-      this.getTicketsQuery(query, orderBy),
-      this.getTicketsCount(query),
+      this.queryTickets(query, orderBy),
+      this.queryTicketsCount(query),
     ]);
 
     return {
@@ -41,7 +41,7 @@ export class TicketService {
   /**
    * Get total count of tickets matching the filters
    */
-  private async getTicketsCount(query: GetTicketsQuery): Promise<number> {
+  private async queryTicketsCount(query: GetTicketsQuery): Promise<number> {
     const { sql, params } = buildAvailableTicketsCountQuery(query);
     const countResult = await this.db.queryOne<{ total: number }>(sql, params);
     return countResult?.total || 0;
@@ -50,7 +50,7 @@ export class TicketService {
   /**
    * Get paginated tickets matching the filters
    */
-  private async getTicketsQuery(query: GetTicketsQuery, orderBy?: OrderByConfig<SimplifiedTicket>[]): Promise<SimplifiedTicket[]> {
+  private async queryTickets(query: GetTicketsQuery, orderBy?: OrderByConfig<SimplifiedTicket>[]): Promise<SimplifiedTicket[]> {
     const { sql, params } = buildAvailableTicketsSelectQuery(query, orderBy);
     return this.db.query<SimplifiedTicket>(sql, params);
   }

@@ -2,4 +2,5 @@
  * Event Queries
  */
 
-// Query builders will be exported here
+export * from './get-event-by-id.query';
+export * from './get-events.query';

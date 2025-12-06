@@ -9,7 +9,7 @@ export const buildInsertUserTicketQuery = (request: UserTicketRequest): QueryRes
 
 export const buildInsertUserTicketSQL = (): string => {
     return `
-    INSERT INTO user_ticket (user_id, ticket_id, unit_price, ticket_amount)
+    insert into user_ticket (user_id, ticket_id, unit_price, ticket_amount)
         select ?, ?, price, ? from ticket where id = ?;
     `;
 }

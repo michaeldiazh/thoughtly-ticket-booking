@@ -5,7 +5,7 @@
  */
 
 import { Request, Response } from 'express';
-import { APIResponse, buildSucceededPaginatedResponse, GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema, Ticket } from '../../domain/dtos';
+import { APIResponse, buildSucceededPaginatedResponse, buildSucceededSingleResponse, GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema, Ticket } from '../../domain/dtos';
 import { SimplifiedTicket } from '../../domain/dtos/ticket/simplified-ticket.dto';
 import { handleError, stringifyQueryParams, parsePositiveInt } from '../utils';
 import { Validator } from '../../domain/validator/validator.interface';
@@ -56,7 +56,10 @@ export class TicketController {
         data: ticket,
       };
 
-      res.status(200).json(response);
+      res.status(200)
+        .json(
+          buildSucceededSingleResponse(ticket)
+        );
     } catch (error) {
       handleError(error, res);
     }

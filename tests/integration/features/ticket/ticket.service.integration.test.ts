@@ -4,10 +4,9 @@
  * Tests using real MySQL 8.4 database via testcontainers
  */
 
-import { TicketService } from '../../../../src/features/ticket/service/ticket.service';
+import { TicketService } from '../../../../src/features/ticket/ticket.service';
 import { getTestDatabase, loadTestData } from '../../../setup/testcontainers.setup';
-import { GetTicketsQuery } from '../../../../src/features/ticket/domain/dtos';
-import { TicketSchema } from '../../../../src/features/ticket/domain/dtos';
+import { GetTicketsQuery, TicketSchema } from '../../../../src/features/ticket/ticket.types';
 
 describe('TicketService Integration Tests', () => {
   let ticketService: TicketService;

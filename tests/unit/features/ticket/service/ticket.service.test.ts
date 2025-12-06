@@ -2,11 +2,11 @@
  * Tests for Ticket Service
  */
 
-import { TicketService } from '../../../../../src/features/ticket/service/ticket.service';
+import { TicketService } from '../../../../../src/features/ticket/ticket.service';
 import { MySQLConnector } from '../../../../../src/shared/database/mysql.connector';
 import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from '../../../../../src/features/ticket/queries/get-tickets.query';
 import { buildTicketByIdQuery } from '../../../../../src/features/ticket/queries/get-ticket-by-id.query';
-import { GetTicketsQuery, SimplifiedTicket, Ticket } from '../../../../../src/features/ticket/domain/dtos';
+import { GetTicketsQuery, SimplifiedTicket, Ticket } from '../../../../../src/features/ticket/ticket.types';
 import { OrderByConfig } from '../../../../../src/shared/types';
 
 // Mock the MySQLConnector

@@ -5,19 +5,18 @@
  */
 
 import { Request, Response } from 'express';
-import { GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema } from '../domain/dtos';
-import { Ticket } from '../domain/dtos';
-import { buildSucceededPaginatedResponse, buildSucceededSingleResponse } from '../../../domain/common.dto';
-import { handleError, stringifyQueryParams, parsePositiveInt } from '../../../shared/utils';
-import { Validator } from '../../../shared/validator';
-import { createZodValidator } from '../../../shared/validator';
-import { TicketService } from '../service/ticket.service';
-import { TicketNotFoundError } from '../../../domain/errors';
+import { GetTicketsQuery, GetTicketsQuerySchema, Ticket } from './ticket.types';
+import { buildSucceededPaginatedResponse, buildSucceededSingleResponse } from '../../domain/common.dto';
+import { handleError, stringifyQueryParams, parsePositiveInt } from '../../shared/utils';
+import { Validator } from '../../shared/validator';
+import { createZodValidator, convertValidationErrorToInvalidQueryParameterError } from '../../shared/validator';
+import { TicketService } from './ticket.service';
+import { TicketNotFoundError } from '../../domain/errors';
 
 export class TicketController {
     private getTicketsValidator: Validator<GetTicketsQuery>;
     constructor(private readonly ticketService: TicketService){
-        this.getTicketsValidator = createZodValidator<GetTicketsQuery>(GetTicketsQuerySchema, getTicketsQueryErrorConverter);
+        this.getTicketsValidator = createZodValidator<GetTicketsQuery>(GetTicketsQuerySchema, convertValidationErrorToInvalidQueryParameterError);
     }
   /**
    * GET /api/v1/ticket
@@ -71,4 +70,3 @@ export class TicketController {
     return this.getTicketsValidator.validate(stringifiedQuery);
   }
 }
-

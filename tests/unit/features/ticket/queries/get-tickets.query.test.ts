@@ -6,7 +6,7 @@ import {
   buildAvailableTicketsCountQuery,
   buildAvailableTicketsSelectQuery,
 } from '../../../../../src/features/ticket/queries/get-tickets.query';
-import { GetTicketsQuery, SimplifiedTicket } from '../../../../../src/features/ticket/domain/dtos';
+import { GetTicketsQuery, SimplifiedTicket } from '../../../../../src/features/ticket/ticket.types';
 import { OrderByConfig } from '../../../../../src/shared/types';
 
 describe('buildAvailableTicketsCountQuery', () => {

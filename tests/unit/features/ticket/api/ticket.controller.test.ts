@@ -3,8 +3,8 @@
  */
 
 import { Request, Response } from 'express';
-import { TicketController } from '../../../../../src/features/ticket/api/ticket.controller';
-import { TicketService } from '../../../../../src/features/ticket/service/ticket.service';
+import { TicketController } from '../../../../../src/features/ticket/ticket.controller';
+import { TicketService } from '../../../../../src/features/ticket/ticket.service';
 import { InvalidQueryParameterError } from '../../../../../src/domain/errors';
 import { handleError } from '../../../../../src/shared/utils';
 

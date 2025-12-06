@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { InvalidRequestError, FieldIssues } from '../../domain/errors';
+import { InvalidRequestError, InvalidQueryParameterError, FieldIssues } from '../../domain/errors';
 
 /**
  * Converts ZodError to FieldIssues format
@@ -69,6 +69,45 @@ export function convertValidationErrorToInvalidRequestError(error: z.ZodError | 
   
   // Regular Error from validation
   return new InvalidRequestError({
+    unknown: {
+      issue: error.message,
+      detail: error.message,
+    },
+  });
+}
+
+/**
+ * Converts validation errors to InvalidQueryParameterError
+ * 
+ * This is a common pattern used for query parameter validation across the application.
+ * It handles ZodError, InvalidRequestError (from parse utilities), and regular Error types,
+ * converting them to the application's standard InvalidQueryParameterError format.
+ * 
+ * @param error - The error to convert (ZodError, InvalidRequestError, or regular Error)
+ * @returns InvalidQueryParameterError with field-level issues
+ * 
+ * @example
+ * ```typescript
+ * export const myQueryErrorConverter = (error: z.ZodError | Error | InvalidRequestError): InvalidQueryParameterError => {
+ *   return convertValidationErrorToInvalidQueryParameterError(error);
+ * };
+ * ```
+ */
+export function convertValidationErrorToInvalidQueryParameterError(
+  error: z.ZodError | Error | InvalidRequestError
+): InvalidQueryParameterError {
+  if (error instanceof z.ZodError) {
+    const fieldIssues = convertZodErrorToFieldIssues(error);
+    return new InvalidQueryParameterError(fieldIssues);
+  }
+  
+  // Handle InvalidRequestError from parse utilities
+  if (error instanceof InvalidRequestError && error.details) {
+    return new InvalidQueryParameterError(error.details as FieldIssues);
+  }
+  
+  // Regular Error from preprocess functions
+  return new InvalidQueryParameterError({
     unknown: {
       issue: error.message,
       detail: error.message,

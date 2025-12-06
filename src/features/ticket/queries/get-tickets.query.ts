@@ -4,7 +4,7 @@
  * Raw SQL queries for GET /tickets endpoint
  */
 
-import { GetTicketsQuery, SimplifiedTicket } from '../domain/dtos';
+import { GetTicketsQuery, SimplifiedTicket } from '../ticket.types';
 import { QueryFilterMap, OrderByConfig, QueryResult, WhereParameterData } from '../../../shared/types';
 
 /**

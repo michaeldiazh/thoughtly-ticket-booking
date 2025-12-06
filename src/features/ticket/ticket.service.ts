@@ -4,20 +4,19 @@
  * Business logic for ticket operations
  */
 
-import { MySQLConnector } from '../../../shared/database';
-import { GetTicketsQuery, SimplifiedTicket } from '../domain/dtos';
-import { Ticket, TicketSchema, ticketErrorConverter, StringifiedTicket } from '../domain/dtos';
-import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from '../queries/get-tickets.query';
-import { buildTicketByIdQuery } from '../queries/get-ticket-by-id.query';
-import { OrderByConfig, QueryResult, WhereParameterData } from '../../../shared/types';
-import { Validator } from '../../../shared/validator';
-import { createZodValidator } from '../../../shared/validator';
+import { MySQLConnector } from '../../shared/database';
+import { GetTicketsQuery, SimplifiedTicket, Ticket, TicketSchema, StringifiedTicket } from './ticket.types';
+import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from './queries/get-tickets.query';
+import { buildTicketByIdQuery } from './queries/get-ticket-by-id.query';
+import { OrderByConfig } from '../../shared/types';
+import { Validator } from '../../shared/validator';
+import { createZodValidator, convertValidationErrorToInvalidRequestError } from '../../shared/validator';
 
 export class TicketService {
   private ticketsValidator: Validator<Ticket>;
 
   constructor(private readonly db: MySQLConnector) {
-    this.ticketsValidator = createZodValidator<Ticket>(TicketSchema, ticketErrorConverter);
+    this.ticketsValidator = createZodValidator<Ticket>(TicketSchema, convertValidationErrorToInvalidRequestError);
   }
 
   /**

@@ -4,7 +4,6 @@
 
 import { z } from 'zod';
 import { preprocessCommaSeparatedPositiveInts } from '../../../../shared/validator';
-import { InvalidQueryParameterError, FieldIssues, InvalidRequestError } from '../../../../domain/errors';
 import { parseNonNegativeInt, parsePositiveInt } from '../../../../shared/utils';
 
 /**
@@ -93,39 +92,3 @@ export const GetEventsQuerySchema = z.object({
  * TypeScript type inferred from Zod schema
  */
 export type GetEventsQuery = z.infer<typeof GetEventsQuerySchema>;
-
-/**
- * Error converter for GetEventsQuery validation
- * Handles both ZodError and regular Errors from preprocess functions
- */
-export const getEventsQueryErrorConverter = (error: z.ZodError | Error | InvalidRequestError): InvalidQueryParameterError => {
-  if (error instanceof z.ZodError) {
-    const fieldIssues: FieldIssues = {};
-    for (const issue of error.issues) {
-      const fieldName = issue.path.length > 0 
-        ? issue.path.join('.') 
-        : 'unknown';
-      if (!fieldIssues[fieldName]) {
-        fieldIssues[fieldName] = {
-          issue: issue.message,
-          detail: issue.code === 'custom' 
-            ? issue.message 
-            : issue.code,
-        };
-      }
-    }
-    return new InvalidQueryParameterError(fieldIssues);
-  }
-  // Handle InvalidRequestError from parse utilities
-  if (error instanceof InvalidRequestError && error.details) {
-    return new InvalidQueryParameterError(error.details as FieldIssues);
-  }
-  // Regular Error from preprocess functions
-  const fieldIssues: FieldIssues = {
-    unknown: {
-      issue: error.message,
-      detail: error.message,
-    },
-  };
-  return new InvalidQueryParameterError(fieldIssues);
-};

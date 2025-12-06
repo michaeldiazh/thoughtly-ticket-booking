@@ -4,6 +4,7 @@
 
 import { Request, Response } from 'express';
 import { TicketController } from '../../../../src/api/controllers/ticket.controller';
+import { TicketService } from '../../../../src/service/ticket.service';
 import { InvalidQueryParameterError } from '../../../../src/domain/errors';
 import { handleError } from '../../../../src/api/utils';
 
@@ -12,6 +13,8 @@ jest.mock('../../../../src/api/utils', () => ({
   ...jest.requireActual('../../../../src/api/utils'),
   handleError: jest.fn(),
 }));
+
+jest.mock('../../../../src/service/ticket.service');
 
 const mockHandleError = handleError as jest.MockedFunction<typeof handleError>;
 
@@ -32,11 +35,20 @@ const createMockResponse = (): Partial<Response> => {
 
 describe('TicketController', () => {
   let controller: TicketController;
+  let mockTicketService: jest.Mocked<TicketService>;
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
 
   beforeEach(() => {
-    controller = new TicketController();
+    // Create a mock TicketService
+    mockTicketService = {
+      getAllAvailableTickets: jest.fn().mockResolvedValue({
+        tickets: [],
+        total: 0,
+      }),
+    } as unknown as jest.Mocked<TicketService>;
+
+    controller = new TicketController(mockTicketService);
     mockReq = createMockRequest();
     mockRes = createMockResponse();
     jest.clearAllMocks();

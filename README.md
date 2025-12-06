@@ -57,6 +57,16 @@ curl -X GET "http://localhost:3000/api/v1/ticket" -H "Content-Type: application/
 curl -X GET "http://localhost:3000/api/v1/ticket/1" -H "Content-Type: application/json"
 ```
 
+**Example: Get all events with filtering**
+```bash
+curl -X GET "http://localhost:3000/api/v1/event?eventName=Summer&venueCountryCode=USAS&limit=10&offset=0" -H "Content-Type: application/json"
+```
+
+**Example: Get a single event by ID**
+```bash
+curl -X GET "http://localhost:3000/api/v1/event/1" -H "Content-Type: application/json"
+```
+
 For complete API documentation including all endpoints, request/response formats, and query parameters, see [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
 
 ## Project Structure
@@ -81,7 +91,12 @@ thoughtly-ticket-booking/
 │   │   │   ├── domain/       # Feature-specific DTOs
 │   │   │   ├── queries/      # SQL query builders
 │   │   │   └── service/      # Business logic
-│   │   └── user-ticket/      # User ticket booking feature
+│   │   ├── user-ticket/      # User ticket booking feature
+│   │   │   ├── api/          # Controllers and routes
+│   │   │   ├── domain/       # Feature-specific DTOs
+│   │   │   ├── queries/      # SQL query builders
+│   │   │   └── service/      # Business logic
+│   │   └── event/            # Event feature
 │   │       ├── api/          # Controllers and routes
 │   │       ├── domain/       # Feature-specific DTOs
 │   │       ├── queries/      # SQL query builders
@@ -145,6 +160,7 @@ thoughtly-ticket-booking/
 - ✅ **TBS-7.4**: Cleaned up old file locations after feature migration
 - ✅ **TBS-8**: Setup app directory structure for application configuration and bootstrap
 - ✅ **TBS-9**: Reorganized event DTOs to event feature directory structure
+- ✅ **TBS-10**: Implemented event endpoints (GET /api/v1/event, GET /api/v1/event/:id) with comprehensive unit and integration tests
 
 ## Design Decisions & Trade-offs
 
@@ -251,7 +267,31 @@ Services are injected into controllers via constructor injection, making the cod
 
 **Testing**: 
 - **Unit Tests**: Located in `tests/unit/features/` mirroring the feature structure, using mocks for isolated testing
+  - **Event Feature**: Comprehensive unit tests for `EventController`, `EventService`, and query builders (`get-events.query`, `get-event-by-id.query`)
+  - **Ticket Feature**: Unit tests for controllers, services, and query builders
+  - **User Ticket Feature**: Unit tests for services and query builders
 - **Integration Tests**: Located in `tests/integration/features/`, using testcontainers with MySQL 8.4 to run tests against a real database
+  - **Event Feature**: Integration tests for `EventService` covering filtering, pagination, and data validation
+  - **Ticket Feature**: Integration tests for `TicketService` with real database queries
+  - **User Ticket Feature**: Integration tests for concurrency control and booking scenarios
+
+**Running Tests**:
+```bash
+# Run all tests
+npm test
+
+# Run only unit tests
+npm run test:unit
+
+# Run only integration tests
+npm run test:integration
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
 
 ## License
 

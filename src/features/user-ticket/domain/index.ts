@@ -2,4 +2,5 @@
  * User Ticket Domain
  */
 
-export * from './dtos';
+export * from './user-ticket';
+export * from './user-ticket-request';

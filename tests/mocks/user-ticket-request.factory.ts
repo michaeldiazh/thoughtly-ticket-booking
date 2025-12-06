@@ -4,7 +4,7 @@
  * Provides factory function to create UserTicketRequest instances for testing
  */
 
-import { UserTicketRequest } from '../../src/features/user-ticket/domain/dtos';
+import { UserTicketRequest } from '../../src/features/user-ticket/domain';
 
 /**
  * Creates a UserTicketRequest instance
@@ -21,14 +21,12 @@ import { UserTicketRequest } from '../../src/features/user-ticket/domain/dtos';
  * // Returns: { userId: 1, ticketId: 1, quantity: 1 }
  * ```
  */
-export function createUserTicketRequest(
+export const createUserTicketRequest = (
   userId: number,
   ticketId: number,
   quantity: number
-): UserTicketRequest {
-  return {
-    userId,
-    ticketId,
-    quantity,
-  };
-}
+): UserTicketRequest => ({
+  userId,
+  ticketId,
+  quantity,
+});

@@ -1,5 +1,5 @@
 import { QueryResult } from "../../../shared/types";
-import { UserTicketRequest } from "../domain/dtos";
+import { UserTicketRequest } from "../domain";
 export const buildInsertUserTicketQuery = (request: UserTicketRequest): QueryResult => {
     return {
         sql: buildInsertUserTicketSQL(),

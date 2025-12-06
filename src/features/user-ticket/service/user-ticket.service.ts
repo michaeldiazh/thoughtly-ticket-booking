@@ -1,19 +1,19 @@
 import { ResultSetHeader, RowDataPacket, PoolConnection } from "mysql2/promise";
 import { MySQLConnector } from "../../../shared/database";
-import { UserTicketRequest } from "../domain/dtos";
+import { UserTicketRequest } from "../domain";
 import { InsufficientTicketsError } from "../../../domain/errors";
 import { buildInsertUserTicketQuery } from "../queries/insert-user-ticket.query";
 import { buildUpdateTicketRemainingQuery } from "../../../features/ticket/queries/update-ticket-remaining.query";
 import { buildGetUserTicketQuery } from "../queries/get-user-ticket.query";
-import { UserTicket, UserTicketSchema, userTicketErrorConverter } from "../domain/dtos/user-ticket.dto";
+import { UserTicket, UserTicketSchema } from "../domain/user-ticket";
 import { Validator } from "../../../shared/validator";
-import { createZodValidator } from "../../../shared/validator";
+import { createZodValidator, convertValidationErrorToInvalidRequestError } from "../../../shared/validator";
 
 export class UserTicketService {
     private userTicketValidator: Validator<UserTicket>;
 
     constructor(private readonly db: MySQLConnector) {
-        this.userTicketValidator = createZodValidator<UserTicket>(UserTicketSchema, userTicketErrorConverter);
+        this.userTicketValidator = createZodValidator<UserTicket>(UserTicketSchema, convertValidationErrorToInvalidRequestError);
     }
 
     async addNewUserTicket(request: UserTicketRequest): Promise<UserTicket> {

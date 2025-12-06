@@ -1,7 +1,8 @@
 /**
  * Parsing Utilities
  * 
- * Common parsing functions for converting strings to numbers with validation.
+ * Common parsing functions for converting strings to numbers with validation
+ * and date/time format conversions.
  * Used in both controllers (for route/query parameters) and Zod preprocessing.
  */
 
@@ -161,4 +162,51 @@ export function parsePositiveFloat(value: unknown, fieldName: string = 'value'):
       detail: `The ${fieldName} must be a valid positive number.`,
     },
   });
+}
+
+/**
+ * Converts MySQL datetime to ISO 8601 format
+ * Handles Date objects, MySQL datetime strings, and already-formatted ISO strings
+ * 
+ * @param data - The value to convert (Date, string, or already ISO 8601)
+ * @returns ISO 8601 formatted string (YYYY-MM-DDTHH:mm:ss.sssZ)
+ * 
+ * @example
+ * ```typescript
+ * // In Zod preprocessing
+ * z.preprocess(
+ *   (data) => convertMySQLDatetimeToISO8601(data),
+ *   z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/, 'Must be ISO 8601 format')
+ * )
+ * ```
+ */
+export function convertMySQLDatetimeToISO8601(data: unknown): string {
+  // If it's a Date object, convert to ISO string
+  if (data instanceof Date) {
+    return data.toISOString();
+  }
+
+  // If it's a string, process it
+  if (typeof data === 'string') {
+    // MySQL returns: '2024-01-15 14:30:00.000' or similar
+    // Convert to: '2024-01-15T14:30:00.000Z'
+    let dateStr = data.trim();
+    
+    // Replace space with T
+    dateStr = dateStr.replace(' ', 'T');
+    
+    // Add Z if not present
+    if (!dateStr.endsWith('Z')) {
+      // If it has milliseconds, keep them, otherwise add .000
+      if (!dateStr.includes('.')) {
+        dateStr = dateStr + '.000';
+      }
+      dateStr = dateStr + 'Z';
+    }
+    
+    return dateStr;
+  }
+
+  // If it's already in the right format, return as-is
+  return data as string;
 }

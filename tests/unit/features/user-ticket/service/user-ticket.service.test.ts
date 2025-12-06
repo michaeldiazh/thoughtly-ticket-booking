@@ -7,7 +7,7 @@ import { MySQLConnector } from '../../../../../src/shared/database/mysql.connect
 import { buildInsertUserTicketQuery } from '../../../../../src/features/user-ticket/queries/insert-user-ticket.query';
 import { buildGetUserTicketQuery } from '../../../../../src/features/user-ticket/queries/get-user-ticket.query';
 import { buildUpdateTicketRemainingQuery } from '../../../../../src/features/ticket/queries/update-ticket-remaining.query';
-import { UserTicketRequest, UserTicket } from '../../../../../src/features/user-ticket/domain/dtos';
+import { UserTicketRequest, UserTicket } from '../../../../../src/features/user-ticket/domain';
 import { InsufficientTicketsError } from '../../../../../src/domain/errors';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 

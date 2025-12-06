@@ -7,7 +7,7 @@
 
 import { UserTicketService } from '../../../../src/features/user-ticket/service/user-ticket.service';
 import { getTestDatabase } from '../../../setup/testcontainers.setup';
-import { UserTicketRequest, UserTicket } from '../../../../src/features/user-ticket/domain/dtos';
+import { UserTicketRequest, UserTicket } from '../../../../src/features/user-ticket/domain';
 import { InsufficientTicketsError } from '../../../../src/domain/errors';
 import { createUserTicketRequest } from '../../../mocks/user-ticket-request.factory';
 import { MySQLConnector } from '../../../../src/shared/database/mysql.connector';

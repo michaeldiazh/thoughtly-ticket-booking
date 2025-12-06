@@ -7,3 +7,4 @@
 export * from './validator.interface';
 export * from './zod-validator.factory';
 export * from './zod-preprocessors.util';
+export * from './error-converter.util';

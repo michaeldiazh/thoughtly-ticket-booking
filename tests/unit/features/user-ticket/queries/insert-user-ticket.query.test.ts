@@ -3,7 +3,7 @@
  */
 
 import { buildInsertUserTicketQuery, buildInsertUserTicketSQL } from '../../../../../src/features/user-ticket/queries/insert-user-ticket.query';
-import { UserTicketRequest } from '../../../../../src/features/user-ticket/domain/dtos';
+import { UserTicketRequest } from '../../../../../src/features/user-ticket/domain';
 
 describe('buildInsertUserTicketQuery', () => {
   it('should build INSERT query with correct structure', () => {

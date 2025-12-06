@@ -144,6 +144,7 @@ thoughtly-ticket-booking/
 - ✅ **TBS-7.3**: Refactored test structure to mirror feature-based organization
 - ✅ **TBS-7.4**: Cleaned up old file locations after feature migration
 - ✅ **TBS-8**: Setup app directory structure for application configuration and bootstrap
+- ✅ **TBS-9**: Reorganized event DTOs to event feature directory structure
 
 ## Design Decisions & Trade-offs
 

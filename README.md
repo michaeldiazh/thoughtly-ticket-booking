@@ -63,12 +63,45 @@ For complete API documentation including all endpoints, request/response formats
 
 ```
 thoughtly-ticket-booking/
-├── src/              # TypeScript source files
-├── dist/             # Compiled JavaScript (generated)
-├── docs/             # Documentation and database schema
-├── package.json      # Dependencies and scripts
-├── tsconfig.json     # TypeScript configuration
-└── README.md         # This file
+├── src/                      # TypeScript source files
+│   ├── app/                  # Application setup and configuration
+│   │   ├── config/           # Configuration modules (database, server)
+│   │   ├── middleware/       # Express middleware setup
+│   │   ├── app.ts            # Express application factory
+│   │   ├── routes.ts         # Route configuration
+│   │   └── server.ts          # Server bootstrap
+│   ├── domain/               # Shared domain types and errors
+│   │   ├── common.dto.ts     # Common DTOs and response builders
+│   │   ├── types.ts          # Generic API response types
+│   │   ├── errors/           # Error classes
+│   │   └── dtos/             # Legacy/shared DTOs
+│   ├── features/             # Feature-based modules
+│   │   ├── ticket/           # Ticket feature
+│   │   │   ├── api/          # Controllers and routes
+│   │   │   ├── domain/       # Feature-specific DTOs
+│   │   │   ├── queries/      # SQL query builders
+│   │   │   └── service/      # Business logic
+│   │   └── user-ticket/      # User ticket booking feature
+│   │       ├── api/          # Controllers and routes
+│   │       ├── domain/       # Feature-specific DTOs
+│   │       ├── queries/      # SQL query builders
+│   │       └── service/      # Business logic
+│   ├── shared/               # Shared utilities
+│   │   ├── database/        # Database connector
+│   │   ├── utils/           # Utility functions
+│   │   └── validator/       # Validation utilities
+│   └── index.ts             # Application entry point
+├── tests/                    # Test files
+│   ├── unit/                # Unit tests
+│   │   ├── features/        # Feature-based unit tests
+│   │   └── shared/         # Shared utility tests
+│   └── integration/         # Integration tests
+│       └── features/       # Feature-based integration tests
+├── dist/                     # Compiled JavaScript (generated)
+├── docs/                     # Documentation and database schema
+├── package.json             # Dependencies and scripts
+├── tsconfig.json            # TypeScript configuration
+└── README.md                # This file
 ```
 
 ## Assignment Requirements
@@ -106,7 +139,11 @@ thoughtly-ticket-booking/
 - ✅ **TBS-4**: Creating all available tickets endpoint with validation and testing infrastructure
 - ✅ **TBS-5**: Implemented GET /api/v1/ticket/:id endpoint with Zod validation and comprehensive testing
 - ✅ **TBS-6**: Created POST /api/v1/user/ticket endpoint with concurrency control, common parsing utilities, standardized response format, and integration tests
-- 🚧 Implementation in progress.
+- ✅ **TBS-7.1**: Refactored user-ticket feature to feature-based structure
+- ✅ **TBS-7.2**: Refactored ticket feature to feature-based structure
+- ✅ **TBS-7.3**: Refactored test structure to mirror feature-based organization
+- ✅ **TBS-7.4**: Cleaned up old file locations after feature migration
+- ✅ **TBS-8**: Setup app directory structure for application configuration and bootstrap
 
 ## Design Decisions & Trade-offs
 
@@ -171,20 +208,49 @@ We use **Zod** (v3.22.4) for type-safe request validation on all API inputs. Thi
 
 The validation layer is abstracted through a `Validator<T>` interface and `createZodValidator` factory, allowing for easy extension to other validation libraries if needed in the future.
 
-### Service Layer Architecture
+### Architecture
 
-The application follows a layered architecture with clear separation of concerns:
+The application follows a **feature-based architecture** with clear separation of concerns:
 
-- **Controllers**: Handle HTTP requests/responses and delegate to services
-- **Services**: Contain business logic and orchestrate data access
-- **Database Connector**: Provides connection pooling and query execution
-- **Query Builders**: Construct type-safe SQL queries with parameter binding
+#### Feature-Based Structure
 
-**Dependency Injection**: Services are injected into controllers via constructor injection, making the code testable and maintainable. The dependency chain is: `MySQLConnector` → `TicketService` → `TicketController`.
+Each feature (e.g., `ticket`, `user-ticket`) is self-contained with:
+- **API Layer** (`api/`): Controllers and route definitions
+- **Domain Layer** (`domain/`): DTOs, types, and domain-specific logic
+- **Service Layer** (`service/`): Business logic and orchestration
+- **Query Layer** (`queries/`): SQL query builders
+
+This structure provides:
+- **Discoverability**: All code related to a feature is in one place
+- **Maintainability**: Easy to locate and modify feature-specific code
+- **Scalability**: New features can be added without affecting existing ones
+- **Testability**: Feature tests mirror the source structure
+
+#### Application Setup
+
+The application setup is organized in `src/app/`:
+- **Configuration** (`config/`): Database and server configuration
+- **Middleware** (`middleware/`): Express middleware setup
+- **Routes** (`routes.ts`): Route configuration
+- **App Factory** (`app.ts`): Express application factory function
+- **Server Bootstrap** (`server.ts`): Server startup logic
+
+#### Shared Resources
+
+Common utilities are organized in `src/shared/`:
+- **Database** (`database/`): MySQL connection pooling and transaction management
+- **Utils** (`utils/`): Error handling, parsing, and query parameter utilities
+- **Validator** (`validator/`): Validation interfaces and Zod factory
+
+#### Dependency Injection
+
+Services are injected into controllers via constructor injection, making the code testable and maintainable. The dependency chain is: `MySQLConnector` → `Service` → `Controller`.
 
 **Database Queries**: We use `mysql2`'s `query()` method (instead of `execute()`) to properly handle dynamic `IN` clauses with arrays. The query builder uses parameterized queries for security while supporting flexible filtering.
 
-**Testing**: Integration tests use testcontainers with MySQL 8.4 to run tests against a real database. Unit tests use mocks for isolated testing of business logic.
+**Testing**: 
+- **Unit Tests**: Located in `tests/unit/features/` mirroring the feature structure, using mocks for isolated testing
+- **Integration Tests**: Located in `tests/integration/features/`, using testcontainers with MySQL 8.4 to run tests against a real database
 
 ## License
 

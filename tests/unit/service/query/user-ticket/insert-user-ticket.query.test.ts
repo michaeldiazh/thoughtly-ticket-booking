@@ -130,7 +130,7 @@ describe('buildInsertUserTicketSQL', () => {
     const sql = buildInsertUserTicketSQL();
 
     expect(typeof sql).toBe('string');
-    expect(sql).toContain('INSERT INTO user_ticket');
+    expect(sql.toLowerCase()).toContain('insert into user_ticket');
     expect(sql.toLowerCase()).toContain('select');
     expect(sql.toLowerCase()).toContain('from ticket');
   });

@@ -101,6 +101,7 @@ thoughtly-ticket-booking/
 - ✅ **TBS-3.1**: Add venue country code to basic event information endpoint
 - ✅ **TBS-3.2**: Simplify ticket listing response for better performance
 - ✅ **TBS-4**: Creating all available tickets endpoint with validation and testing infrastructure
+- ✅ **TBS-4.1**: Implemented Ticket Service with dependency injection, MySQL connector, and integration tests with testcontainers
 - 🚧 Implementation in progress.
 
 ## Design Decisions & Trade-offs
@@ -164,6 +165,21 @@ We use **Zod** (v3.22.4) for type-safe request validation on all API inputs. Thi
 - **Flexible Input Handling**: Our `stringifyQueryParams` utility normalizes Express query parameters (arrays, strings, numbers, booleans) before validation, supporting both comma-separated values (`?tierCodes=GA,VIP`) and multiple query params (`?tierCodes=GA&tierCodes=VIP`)
 
 The validation layer is abstracted through a `Validator<T>` interface and `createZodValidator` factory, allowing for easy extension to other validation libraries if needed in the future.
+
+### Service Layer Architecture
+
+The application follows a layered architecture with clear separation of concerns:
+
+- **Controllers**: Handle HTTP requests/responses and delegate to services
+- **Services**: Contain business logic and orchestrate data access
+- **Database Connector**: Provides connection pooling and query execution
+- **Query Builders**: Construct type-safe SQL queries with parameter binding
+
+**Dependency Injection**: Services are injected into controllers via constructor injection, making the code testable and maintainable. The dependency chain is: `MySQLConnector` → `TicketService` → `TicketController`.
+
+**Database Queries**: We use `mysql2`'s `query()` method (instead of `execute()`) to properly handle dynamic `IN` clauses with arrays. The query builder uses parameterized queries for security while supporting flexible filtering.
+
+**Testing**: Integration tests use testcontainers with MySQL 8.4 to run tests against a real database. Unit tests use mocks for isolated testing of business logic.
 
 ## License
 

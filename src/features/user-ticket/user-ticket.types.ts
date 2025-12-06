@@ -5,17 +5,16 @@
  */
 
 import { z } from 'zod';
-import { preprocessToPositiveFloat } from '../../shared/validator';
-import { convertMySQLDatetimeToISO8601 } from '../../shared/utils/parse.util';
+import { iso8601DatetimeSchema, positivePriceSchema, positiveIntIdSchema } from '../../shared/validator';
 
 /**
  * Zod schema for UserTicketRequest
  * Validates request body for booking tickets
  */
 export const UserTicketRequestSchema = z.object({
-  ticketId: z.number().int().positive(),
-  userId: z.number().int().positive(),
-  quantity: z.number().int().positive().min(1),
+  ticketId: positiveIntIdSchema,
+  userId: positiveIntIdSchema,
+  quantity: positiveIntIdSchema.min(1),
 });
 
 /**
@@ -29,16 +28,13 @@ export type UserTicketRequest = z.infer<typeof UserTicketRequestSchema>;
  * Handles preprocessing of decimal values from MySQL and validates all fields
  */
 export const UserTicketSchema = z.object({
-  id: z.number().int().positive(),
-  ticketId: z.number().int().positive(),
-  userId: z.number().int().positive(),
-  unitPrice: z.preprocess(preprocessToPositiveFloat, z.number().positive()),
-  ticketAmount: z.number().int().positive(),
-  totalPrice: z.preprocess(preprocessToPositiveFloat, z.number().positive()),
-  datePurchased: z.preprocess(
-    convertMySQLDatetimeToISO8601,
-    z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/, 'Must be ISO 8601 format')
-  ),
+  id: positiveIntIdSchema,
+  ticketId: positiveIntIdSchema,
+  userId: positiveIntIdSchema,
+  unitPrice: positivePriceSchema,
+  ticketAmount: positiveIntIdSchema,
+  totalPrice: positivePriceSchema,
+  datePurchased: iso8601DatetimeSchema,
 });
 
 /**

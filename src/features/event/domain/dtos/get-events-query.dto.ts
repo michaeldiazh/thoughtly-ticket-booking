@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { preprocessCommaSeparatedPositiveInts } from '../../../../shared/validator';
+import { preprocessCommaSeparatedPositiveInts, positiveIntIdSchema, nonNegativeIntSchema, arrayOfPositiveIntIdsSchema } from '../../../../shared/validator';
 import { parseNonNegativeInt, parsePositiveInt } from '../../../../shared/utils';
 
 /**
@@ -15,7 +15,7 @@ export const GetEventsQuerySchema = z.object({
   eventIds: z
     .preprocess(
       preprocessCommaSeparatedPositiveInts,
-      z.array(z.number().int().positive()).min(1).optional()
+      arrayOfPositiveIntIdsSchema
     ),
   // Optional: event name
   eventName: z.preprocess(
@@ -75,7 +75,7 @@ export const GetEventsQuerySchema = z.object({
       if (!val) return 10;
       return parsePositiveInt(val, 'limit');
     },
-    z.number().int().positive().default(10)
+    positiveIntIdSchema.default(10)
   ),
 
   // Offset with default
@@ -84,7 +84,7 @@ export const GetEventsQuerySchema = z.object({
       if (!val) return 0;
       return parseNonNegativeInt(val, 'offset');
     },
-    z.number().int().nonnegative().default(0)
+    nonNegativeIntSchema.default(0)
   ),
 });
 

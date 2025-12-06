@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { SimplifiedEvent, SimplifiedEventSchema } from './simplified-event.dto';
 import { VenueDetailResponse } from '../../../../domain/common.dto';
 import { InvalidRequestError, FieldIssues } from '../../../../domain/errors';
-import { preprocessToPositiveFloat } from '../../../../shared/validator';
+import { positivePriceSchema, positiveIntIdSchema, nonEmptyStringSchema, nonNegativeIntSchema, nullableStringSchema, countryCodeSchema } from '../../../../shared/validator';
 
 /**
  * Tier availability information
@@ -29,23 +29,23 @@ export interface TierAvailability {
  * Zod schema for TierAvailability
  */
 export const TierAvailabilitySchema = z.object({
-  ticketId: z.number().int().positive(),
-  price: z.preprocess(preprocessToPositiveFloat, z.number().positive()),
-  remaining: z.number().int().min(0),
-  capacity: z.number().int().positive(),
+  ticketId: positiveIntIdSchema,
+  price: positivePriceSchema,
+  remaining: nonNegativeIntSchema,
+  capacity: positiveIntIdSchema,
 });
 
 /**
  * Zod schema for VenueDetailResponse
  */
 export const VenueDetailResponseSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(1),
-  address: z.string().min(1),
-  city: z.string().min(1),
-  region: z.string().nullable(),
-  countryCode: z.string().min(2).max(4),
-  timezone: z.string().min(1),
+  id: positiveIntIdSchema,
+  name: nonEmptyStringSchema,
+  address: nonEmptyStringSchema,
+  city: nonEmptyStringSchema,
+  region: nullableStringSchema,
+  countryCode: countryCodeSchema,
+  timezone: nonEmptyStringSchema,
 });
 
 /**

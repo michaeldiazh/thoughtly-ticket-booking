@@ -7,7 +7,7 @@
 import { z } from 'zod';
 import { SimplifiedEvent } from '../event/domain/dtos/simplified-event.dto';
 import { VenueDetailResponse } from '../../domain/common.dto';
-import { preprocessToPositiveFloat, preprocessCommaSeparatedStrings, preprocessCommaSeparatedPositiveInts } from '../../shared/validator';
+import { preprocessCommaSeparatedStrings, preprocessCommaSeparatedPositiveInts, iso8601DatetimeSchema, positivePriceSchema, positiveIntIdSchema, nonEmptyStringSchema, nonNegativeIntSchema, nullableStringSchema, countryCodeSchema, arrayOfPositiveIntIdsSchema, arrayOfNonEmptyStringsSchema } from '../../shared/validator';
 import { parseNonNegativeInt, parsePositiveInt } from '../../shared/utils';
 
 /**
@@ -29,24 +29,24 @@ export interface SimplifiedTicket {
  * Zod schema for VenueDetailResponse
  */
 export const VenueDetailResponseSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(1),
-  address: z.string().min(1),
-  city: z.string().min(1),
-  region: z.string().nullable(),
-  countryCode: z.string().min(2).max(4),
-  timezone: z.string().min(1),
+  id: positiveIntIdSchema,
+  name: nonEmptyStringSchema,
+  address: nonEmptyStringSchema,
+  city: nonEmptyStringSchema,
+  region: nullableStringSchema,
+  countryCode: countryCodeSchema,
+  timezone: nonEmptyStringSchema,
 });
 
 /**
  * Zod schema for EventDetailResponse
  */
 export const EventDetailResponseSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  startTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
-  endTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
+  id: positiveIntIdSchema,
+  name: nonEmptyStringSchema,
+  description: nullableStringSchema,
+  startTime: iso8601DatetimeSchema,
+  endTime: iso8601DatetimeSchema,
   venue: VenueDetailResponseSchema,
 });
 
@@ -79,14 +79,14 @@ export interface StringifiedTicket {
  */
 export const TicketSchema = 
   z.object({
-    id: z.number().int().positive(),
-    tierCode: z.string().min(1),
-    tierDisplayName: z.string().min(1),
-    capacity: z.number().int().nonnegative(),
-    remaining: z.number().int().nonnegative(),
-    price: z.preprocess(preprocessToPositiveFloat, z.number().positive()),
-    createdAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
-    lastUpdated: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
+    id: positiveIntIdSchema,
+    tierCode: nonEmptyStringSchema,
+    tierDisplayName: nonEmptyStringSchema,
+    capacity: nonNegativeIntSchema,
+    remaining: nonNegativeIntSchema,
+    price: positivePriceSchema,
+    createdAt: iso8601DatetimeSchema,
+    lastUpdated: iso8601DatetimeSchema,
     event: z.preprocess(
       (data) => {
         if (typeof data === 'string') {
@@ -113,7 +113,7 @@ export const GetTicketsQuerySchema = z.object({
   ticketIds: z
     .preprocess(
       preprocessCommaSeparatedPositiveInts,
-      z.array(z.number().int().positive()).min(1).optional()
+      arrayOfPositiveIntIdsSchema
     ),
 
   // Optional: comma-separated tier codes
@@ -123,7 +123,7 @@ export const GetTicketsQuerySchema = z.object({
         const result = preprocessCommaSeparatedStrings(val);
         return result?.map((code: string) => code.toUpperCase());
       },
-      z.array(z.string()).min(1).optional()
+      arrayOfNonEmptyStringsSchema
     ),
 
   // Optional: event name
@@ -184,7 +184,7 @@ export const GetTicketsQuerySchema = z.object({
       if (!val) return 10;
       return parsePositiveInt(val, 'limit');
     },
-    z.number().int().positive().default(10)
+    positiveIntIdSchema.default(10)
   ),
 
   // Offset with default
@@ -193,7 +193,7 @@ export const GetTicketsQuerySchema = z.object({
       if (!val) return 0;
       return parseNonNegativeInt(val, 'offset');
     },
-    z.number().int().nonnegative().default(0)
+    nonNegativeIntSchema.default(0)
   ),
 });
 

@@ -5,17 +5,18 @@
  */
 
 import { z } from 'zod';
+import { iso8601DatetimeSchema, positiveIntIdSchema, nonEmptyStringSchema, nullableStringSchema, countryCodeSchema } from '../../../../shared/validator';
 
 /**
  * Zod schema for SimplifiedEvent
  * Base event fields shared across all event responses
  */
 export const SimplifiedEventSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  startTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
-  endTime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
+  id: positiveIntIdSchema,
+  name: nonEmptyStringSchema,
+  description: nullableStringSchema,
+  startTime: iso8601DatetimeSchema,
+  endTime: iso8601DatetimeSchema,
 });
 
 /**
@@ -30,10 +31,10 @@ export type SimplifiedEvent = z.infer<typeof SimplifiedEventSchema>;
  * Used for GET /api/v1/event endpoint
  */
 export const EventListItemSchema = SimplifiedEventSchema.extend({
-  venueName: z.string().min(1),
-  venueCity: z.string().min(1),
-  venueCountryCode: z.string().min(2).max(4),
-  venueTimezone: z.string().min(1),
+  venueName: nonEmptyStringSchema,
+  venueCity: nonEmptyStringSchema,
+  venueCountryCode: countryCodeSchema,
+  venueTimezone: nonEmptyStringSchema,
 });
 
 /**

@@ -5,8 +5,8 @@
  */
 
 import { TicketService } from '../../../src/service/ticket.service';
-import { getTestDatabase } from '../../setup/testcontainers.setup';
-import { GetTicketsQuery } from '../../../src/domain/dtos';
+import { getTestDatabase, loadTestData } from '../../setup/testcontainers.setup';
+import { GetTicketsQuery, TicketSchema } from '../../../src/domain/dtos';
 
 describe('TicketService Integration Tests', () => {
   let ticketService: TicketService;
@@ -26,8 +26,8 @@ describe('TicketService Integration Tests', () => {
     await db.query('DELETE FROM price_tier');
     await db.query('DELETE FROM user');
 
-    // Insert test data
-    await setupTestData(db);
+    // Reload test data from test_data.sql
+    await loadTestData(db);
   });
 
   describe('getAllAvailableTickets', () => {
@@ -117,52 +117,116 @@ describe('TicketService Integration Tests', () => {
       expect(result.tickets.length).toBeLessThanOrEqual(1);
     });
   });
+
+  describe('getTicketById', () => {
+    it('should return a ticket with nested event and venue when found', async () => {
+      // First, get a ticket ID from the test data
+      const tickets = await db.query<{ id: number }>('SELECT id FROM ticket LIMIT 1');
+      const ticketId = tickets[0]?.id;
+
+      if (!ticketId) {
+        throw new Error('No tickets found in test data');
+      }
+
+      const result = await ticketService.getTicketById(ticketId);
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(ticketId);
+
+      // Validate using Zod schema - this ensures all required fields are present
+      // and match the expected structure, including nested event and venue
+      const validatedResult = TicketSchema.parse(result);
+      
+      // Verify event exists and is valid
+      expect(validatedResult.event).toBeDefined();
+      expect(validatedResult.event.id).toBeGreaterThan(0);
+      expect(validatedResult.event.name).toBeTruthy();
+      
+      // Verify venue exists and is nested in event
+      expect(validatedResult.event.venue).toBeDefined();
+      expect(validatedResult.event.venue.id).toBeGreaterThan(0);
+      expect(validatedResult.event.venue.name).toBeTruthy();
+      expect(validatedResult.event.venue.address).toBeTruthy();
+      expect(validatedResult.event.venue.city).toBeTruthy();
+      expect(validatedResult.event.venue.countryCode.length).toBeGreaterThanOrEqual(2);
+      expect(validatedResult.event.venue.countryCode.length).toBeLessThanOrEqual(4);
+      expect(validatedResult.event.venue.timezone).toBeTruthy();
+    });
+
+    it('should return null when ticket not found', async () => {
+      const nonExistentTicketId = 99999;
+
+      const result = await ticketService.getTicketById(nonExistentTicketId);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return ticket with correct event and venue relationships', async () => {
+      // Get a ticket ID
+      const tickets = await db.query<{ id: number; event_id: number }>('SELECT id, event_id FROM ticket LIMIT 1');
+      const ticketId = tickets[0]?.id;
+      const expectedEventId = tickets[0]?.event_id;
+
+      if (!ticketId || !expectedEventId) {
+        throw new Error('No tickets found in test data');
+      }
+
+      const result = await ticketService.getTicketById(ticketId);
+
+      expect(result).not.toBeNull();
+      
+      // Validate using Zod schema to ensure structure is correct
+      const validatedResult = TicketSchema.parse(result);
+      
+      expect(validatedResult.eventId).toBe(expectedEventId);
+      expect(validatedResult.event.id).toBe(expectedEventId);
+
+      // Verify venue is correctly nested in event and is valid
+      expect(validatedResult.event.venue).toBeDefined();
+      expect(validatedResult.event.venue.id).toBeGreaterThan(0);
+      expect(validatedResult.event.venue.name).toBeTruthy();
+    });
+
+    it('should validate ticket data structure matches DTO', async () => {
+      const tickets = await db.query<{ id: number }>('SELECT id FROM ticket LIMIT 1');
+      const ticketId = tickets[0]?.id;
+
+      if (!ticketId) {
+        throw new Error('No tickets found in test data');
+      }
+
+      const result = await ticketService.getTicketById(ticketId);
+
+      // Validate using Zod schema - this ensures all fields match the DTO structure
+      const validatedResult = TicketSchema.parse(result);
+      
+      expect(validatedResult).not.toBeNull();
+      
+      // All numeric fields should be numbers (validated by Zod)
+      expect(Number.isInteger(validatedResult.id)).toBe(true);
+      expect(Number.isInteger(validatedResult.eventId)).toBe(true);
+      expect(Number.isInteger(validatedResult.capacity)).toBe(true);
+      expect(Number.isInteger(validatedResult.remaining)).toBe(true);
+      expect(typeof validatedResult.price).toBe('number');
+      expect(validatedResult.price).toBeGreaterThan(0);
+
+      // String fields should be non-empty (validated by Zod)
+      expect(validatedResult.tierCode.length).toBeGreaterThan(0);
+      expect(validatedResult.tierDisplayName.length).toBeGreaterThan(0);
+      expect(validatedResult.createdAt.length).toBeGreaterThan(0);
+      expect(validatedResult.lastUpdated.length).toBeGreaterThan(0);
+
+      // Nested event MUST exist and be valid (validated by Zod)
+      expect(validatedResult.event).toBeDefined();
+      expect(validatedResult.event.id).toBeGreaterThan(0);
+      expect(validatedResult.event.name.length).toBeGreaterThan(0);
+      
+      // Nested venue MUST exist in event and be valid (validated by Zod)
+      expect(validatedResult.event.venue).toBeDefined();
+      expect(validatedResult.event.venue.id).toBeGreaterThan(0);
+      expect(validatedResult.event.venue.name.length).toBeGreaterThan(0);
+      expect(validatedResult.event.venue.countryCode.length).toBeGreaterThanOrEqual(2);
+      expect(validatedResult.event.venue.countryCode.length).toBeLessThanOrEqual(4);
+    });
+  });
 });
-
-/**
- * Setup test data in the database
- */
-async function setupTestData(db: ReturnType<typeof getTestDatabase>): Promise<void> {
-  // Insert price tiers
-  await db.query(`
-    INSERT INTO price_tier (code, display_name, default_price) VALUES
-    ('VIP', 'VIP', 100.00),
-    ('FRONT_ROW', 'Front Row', 50.00),
-    ('GA', 'General Admission', 10.00)
-    ON DUPLICATE KEY UPDATE display_name = VALUES(display_name)
-  `);
-
-  // Insert venue and get ID
-  await db.query(`
-    INSERT INTO venue (name, address, city, country_code, timezone) VALUES
-    ('Madison Square Garden', '4 Pennsylvania Plaza', 'New York', 'US', 'America/New_York')
-  `);
-  const venueResults = await db.query<{ id: number }>(`
-    SELECT id FROM venue WHERE name = 'Madison Square Garden' LIMIT 1
-  `);
-  const venueId = venueResults[0]?.id;
-  if (!venueId) {
-    throw new Error('Failed to insert venue');
-  }
-
-  // Insert event and get ID
-  await db.query(`
-    INSERT INTO event (name, description, venue_id, start_time, end_time) VALUES
-    ('Summer Concert 2024', 'A great summer concert', ?, '2024-07-15 19:00:00', '2024-07-15 22:00:00')
-  `, [venueId]);
-  const eventResults = await db.query<{ id: number }>(`
-    SELECT id FROM event WHERE name = 'Summer Concert 2024' LIMIT 1
-  `);
-  const eventId = eventResults[0]?.id;
-  if (!eventId) {
-    throw new Error('Failed to insert event');
-  }
-
-  // Insert tickets
-  await db.query(`
-    INSERT INTO ticket (event_id, tier_code, capacity, remaining, price) VALUES
-    (?, 'VIP', 50, 45, 100.00),
-    (?, 'FRONT_ROW', 30, 20, 50.00),
-    (?, 'GA', 200, 200, 10.00)
-  `, [eventId, eventId, eventId]);
-}

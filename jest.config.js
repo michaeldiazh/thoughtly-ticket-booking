@@ -15,4 +15,6 @@ module.exports = {
     '!src/**/*.test.ts',
     '!src/**/*.spec.ts',
   ],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
+  testTimeout: 30000, // 30 second timeout for tests (containers need time)
 };

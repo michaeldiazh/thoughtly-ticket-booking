@@ -108,6 +108,19 @@ export function handleError(error: unknown, res: Response): void {
 
   if (handlerEntry) {
     const { statusCode, response } = handlerEntry.handler(error);
+    
+    // Log 500 errors to console for debugging
+    if (statusCode === 500) {
+      console.error('=== 500 Internal Server Error ===');
+      console.error('Error:', error);
+      if (error instanceof Error) {
+        console.error('Error Message:', error.message);
+        console.error('Error Stack:', error.stack);
+      }
+      console.error('Response:', response);
+      console.error('================================');
+    }
+    
     res.status(statusCode).json(response);
     return;
   }
@@ -120,5 +133,19 @@ export function handleError(error: unknown, res: Response): void {
       message: 'An unexpected error occurred',
     },
   };
+  
+  // Log unknown errors to console
+  console.error('=== 500 Internal Server Error (Unknown) ===');
+  console.error('Error:', error);
+  if (error instanceof Error) {
+    console.error('Error Message:', error.message);
+    console.error('Error Stack:', error.stack);
+  } else {
+    console.error('Error Type:', typeof error);
+    console.error('Error Value:', JSON.stringify(error, null, 2));
+  }
+  console.error('Response:', response);
+  console.error('==========================================');
+  
   res.status(500).json(response);
 }

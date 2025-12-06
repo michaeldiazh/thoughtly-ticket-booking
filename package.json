@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
@@ -24,16 +25,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@testcontainers/mysql": "^11.9.0",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^16.18.0",
     "jest": "^30.2.0",
+    "testcontainers": "^11.9.0",
     "ts-jest": "^29.4.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "mysql2": "^3.15.3",
     "zod": "^3.22.4"
   }
 }

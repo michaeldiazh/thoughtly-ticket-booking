@@ -5,7 +5,7 @@
 /**
  * Simplified ticket information for listing
  */
-export interface TicketResponse {
+export interface SimplifiedTicket {
   id: number;
   eventName: string;
   tierDisplayName: string;
@@ -16,4 +16,3 @@ export interface TicketResponse {
   venueCountryCode: string;
   eventStartTime: string; // ISO 8601 format
 }
-

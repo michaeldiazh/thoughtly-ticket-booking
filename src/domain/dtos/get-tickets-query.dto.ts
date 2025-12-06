@@ -26,7 +26,7 @@ export const GetTicketsQuerySchema = z.object({
             return num;
           });
       },
-      z.array(z.number().int().positive()).optional()
+      z.array(z.number().int().positive()).min(1).optional()
     ),
 
   // Optional: comma-separated tier codes
@@ -38,7 +38,7 @@ export const GetTicketsQuerySchema = z.object({
           .split(',')
           .map((code) => code.trim().toUpperCase());
       },
-      z.array(z.string()).optional()
+      z.array(z.string()).min(1).optional()
     ),
 
   // Optional: event name

@@ -435,9 +435,10 @@ GET /api/v1/event?venueName=Madison&limit=5&offset=0
       "description": "An amazing summer concert experience",
       "startTime": "2024-07-15T19:00:00Z",
       "endTime": "2024-07-15T22:00:00Z",
-      "venueId": 2,
       "venueName": "Madison Square Garden",
-      "venueCity": "New York"
+      "venueCity": "New York",
+      "venueCountry": "US",
+      "venueTimezone": "America/New_York"
     }
   ],
   "perPage": 10,
@@ -466,7 +467,7 @@ GET /api/v1/event?venueName=Madison&limit=5&offset=0
 
 **Notes:**
 - Returns paginated list of events with basic information for browsing
-- Venue information is simplified to id, name, and city
+- Venue information includes name, city, country code, and timezone (no venueId)
 - All query parameters are optional
 - Multiple filters can be combined (AND logic)
 - Date ranges are inclusive

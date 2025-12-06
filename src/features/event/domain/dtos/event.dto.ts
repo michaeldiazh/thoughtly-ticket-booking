@@ -1,8 +1,11 @@
 /**
- * DTOs for GET /event/:id endpoint (Event Detail)
+ * Event DTO
+ * 
+ * Complete event information with venue and tier availability
  */
 
-import { BaseEventFields, VenueDetailResponse } from '../common.dto';
+import { SimplifiedEvent } from './simplified-event.dto';
+import { VenueDetailResponse } from '../../../../domain/common.dto';
 
 /**
  * Tier availability information
@@ -16,8 +19,7 @@ export interface TierAvailability {
 /**
  * Event information with tier availability
  */
-export interface EventDetailWithTiersResponse extends BaseEventFields {
+export interface Event extends SimplifiedEvent {
   venue: VenueDetailResponse;
   tiers: Record<string, TierAvailability>; // Key is tier code (e.g., "VIP", "FRONT_ROW", "GA")
 }
-

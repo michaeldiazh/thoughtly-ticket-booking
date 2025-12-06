@@ -73,10 +73,14 @@ export class MySQLConnector {
   }
 
   /**
-   * Begin a transaction
+   * Begin a transaction with READ COMMITTED isolation level
+   * READ COMMITTED allows each transaction to see committed changes from other transactions,
+   * which is appropriate for our concurrency control with row-level locking
    */
   async beginTransaction(): Promise<PoolConnection> {
     const connection = await this.getConnection();
+    // Set isolation level before starting transaction
+    await connection.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
     await connection.beginTransaction();
     return connection;
   }

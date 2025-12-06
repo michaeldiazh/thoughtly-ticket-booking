@@ -21,14 +21,17 @@ export class TicketNotFoundError extends AppError {
  * Error thrown when there are insufficient tickets available
  */
 export class InsufficientTicketsError extends AppError {
-  constructor(ticketId: number, requested: number, remaining: number) {
+  constructor(ticketId: number, requested: number, remaining?: number) {
+    const message = remaining !== undefined
+      ? `Not enough tickets available. Remaining: ${remaining}, Requested: ${requested}`
+      : `Not enough tickets available. Requested: ${requested}`;
     super(
       'INSUFFICIENT_TICKETS',
-      `Not enough tickets available. Remaining: ${remaining}, Requested: ${requested}`,
+      message,
       {
         ticketId,
         requested,
-        remaining,
+        ...(remaining !== undefined && { remaining }),
       }
     );
   }

@@ -11,6 +11,9 @@ import { createTicketRoutes } from './api/routes/ticket.routes';
 import { TicketController } from './api/controllers/ticket.controller';
 import { TicketService } from './service/ticket.service';
 import { MySQLConnector, MySQLConfig } from './service/database';
+import { createUserTicketRoutes } from './api/routes/user-ticket.route';
+import { UserTicketService } from './service/user-ticket.service';
+import { UserTicketController } from './api/controllers/user-ticket.controller';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -32,9 +35,11 @@ const dbConfig: MySQLConfig = {
 const db = new MySQLConnector(dbConfig);
 const ticketService = new TicketService(db);
 const ticketController = new TicketController(ticketService);
-
+const userTicketService = new UserTicketService(db);
+const userTicketController = new UserTicketController(userTicketService);
 // Routes
 app.use('/api/v1/ticket', createTicketRoutes(ticketController));
+app.use('/api/v1/user/ticket', createUserTicketRoutes(userTicketController));
 
 // Start server
 app.listen(Number(PORT), (err: Error | undefined) => {

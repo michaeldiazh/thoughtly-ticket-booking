@@ -10,8 +10,8 @@ export * from './common.dto';
 export * from './ticket/simplified-ticket.dto';
 export * from './get-tickets-query.dto';
 export * from './ticket/ticket.dto';
-export * from './book-ticket-request.dto';
-export * from './book-ticket-response.dto';
+export * from './user-ticket/user-ticket-request.dto';
+export * from './user-ticket/user-ticket.dto';
 export * from './get-events-response.dto';
 export * from './get-event-by-id-response.dto';
 

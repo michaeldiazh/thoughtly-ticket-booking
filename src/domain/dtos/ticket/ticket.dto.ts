@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { BaseEventFields, VenueDetailResponse } from '../common.dto';
 import { InvalidRequestError, FieldIssues } from '../../errors';
+import { preprocessToPositiveFloat } from '../../validator';
 
 /**
  * Zod schema for VenueDetailResponse
@@ -59,12 +60,7 @@ export const TicketSchema =
     tierDisplayName: z.string().min(1),
     capacity: z.number().int().nonnegative(),
     remaining: z.number().int().nonnegative(),
-    price: z.preprocess((data) => {
-      if (typeof data === 'string') {
-        return Number.parseFloat(data);
-      }
-      return data;
-    },z.number().positive()),
+    price: z.preprocess(preprocessToPositiveFloat, z.number().positive()),
     createdAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
     lastUpdated: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Must be ISO 8601 format'),
     event: z.preprocess(

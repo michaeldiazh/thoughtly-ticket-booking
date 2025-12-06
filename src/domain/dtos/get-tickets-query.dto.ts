@@ -3,8 +3,9 @@
  */
 
 import { z } from 'zod';
-import { createZodValidator } from '../validator';
-import { InvalidQueryParameterError, FieldIssues } from '../errors';
+import { preprocessCommaSeparatedStrings, preprocessCommaSeparatedPositiveInts } from '../validator';
+import { InvalidQueryParameterError, FieldIssues, InvalidRequestError } from '../errors';
+import { parseNonNegativeInt, parsePositiveInt } from '../../api/utils';
 
 /**
  * Zod schema for query parameters
@@ -14,18 +15,7 @@ export const GetTicketsQuerySchema = z.object({
   // Optional: comma-separated ticket IDs
   ticketIds: z
     .preprocess(
-      (val) => {
-        if (!val || typeof val !== 'string') return undefined;
-        return val
-          .split(',')
-          .map((id) => {
-            const num = parseInt(id.trim(), 10);
-            if (isNaN(num) || num <= 0) {
-              throw new Error(`Invalid ticket ID: ${id}`);
-            }
-            return num;
-          });
-      },
+      preprocessCommaSeparatedPositiveInts,
       z.array(z.number().int().positive()).min(1).optional()
     ),
 
@@ -33,10 +23,8 @@ export const GetTicketsQuerySchema = z.object({
   tierCodes: z
     .preprocess(
       (val) => {
-        if (!val || typeof val !== 'string') return undefined;
-        return val
-          .split(',')
-          .map((code) => code.trim().toUpperCase());
+        const result = preprocessCommaSeparatedStrings(val);
+        return result?.map((code) => code.toUpperCase());
       },
       z.array(z.string()).min(1).optional()
     ),
@@ -97,11 +85,7 @@ export const GetTicketsQuerySchema = z.object({
   limit: z.preprocess(
     (val) => {
       if (!val) return 10;
-      const num = parseInt(String(val), 10);
-      if (isNaN(num) || num <= 0) {
-        throw new Error('must be a positive number');
-      }
-      return num;
+      return parsePositiveInt(val, 'limit');
     },
     z.number().int().positive().default(10)
   ),
@@ -110,11 +94,7 @@ export const GetTicketsQuerySchema = z.object({
   offset: z.preprocess(
     (val) => {
       if (!val) return 0;
-      const num = parseInt(String(val), 10);
-      if (isNaN(num) || num < 0) {
-        throw new Error('must be a non-negative number');
-      }
-      return num;
+      return parseNonNegativeInt(val, 'offset');
     },
     z.number().int().nonnegative().default(0)
   ),
@@ -129,7 +109,7 @@ export type GetTicketsQuery = z.infer<typeof GetTicketsQuerySchema>;
  * Error converter for GetTicketsQuery validation
  * Handles both ZodError and regular Errors from preprocess functions
  */
-export const getTicketsQueryErrorConverter = (error: z.ZodError | Error): InvalidQueryParameterError => {
+export const getTicketsQueryErrorConverter = (error: z.ZodError | Error | InvalidRequestError): InvalidQueryParameterError => {
   if (error instanceof z.ZodError) {
     const fieldIssues: FieldIssues = {};
     for (const issue of error.issues) {
@@ -146,6 +126,10 @@ export const getTicketsQueryErrorConverter = (error: z.ZodError | Error): Invali
       }
     }
     return new InvalidQueryParameterError(fieldIssues);
+  }
+  // Handle InvalidRequestError from parse utilities
+  if (error instanceof InvalidRequestError && error.details) {
+    return new InvalidQueryParameterError(error.details as FieldIssues);
   }
   // Regular Error from preprocess functions
   const fieldIssues: FieldIssues = {

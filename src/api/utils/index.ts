@@ -6,3 +6,4 @@
 
 export * from './query-param.util';
 export * from './error-handler.util';
+export * from './parse.util';

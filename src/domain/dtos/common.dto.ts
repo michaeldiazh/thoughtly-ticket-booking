@@ -1,3 +1,4 @@
+import { SucceededPaginatedResponse } from "./types";
 /**
  * Common DTOs shared across multiple endpoints
  */
@@ -32,3 +33,12 @@ export interface VenueDetailResponse extends VenueResponse {
   region: string | null;
 }
 
+export const buildSucceededPaginatedResponse = <T>(data: T[], perPage: number, offset: number, total: number): SucceededPaginatedResponse<T> => {
+  return {
+    status: 'OK',
+    data,
+    perPage,
+    offset,
+    total,
+  };
+}

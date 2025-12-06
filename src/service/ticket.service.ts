@@ -64,24 +64,10 @@ export class TicketService {
    */
   async getTicketById(ticketId: number): Promise<Ticket | null> {
     const { sql, params } = buildTicketByIdQuery(ticketId);
-    const result = await this.db.queryOne< {
-      id: number;
-      eventId: number;
-      tierCode: string;
-      tierDisplayName: string;
-      capacity: number;
-      remaining: number;
-      price: number;
-      createdAt: string;
-      lastUpdated: string;
-      event: string}>(sql, params);
-
+    const result = await this.db.queryOne<StringifiedTicket>(sql, params);
     if (!result) {
       return null;
     }
-
-    // Preprocessing (JSON parsing) is handled by TicketSchema
-    // Validate the ticket data before returning
     return this.ticketsValidator.validate(result);
   }
 }

@@ -5,9 +5,9 @@
  */
 
 import { Request, Response } from 'express';
-import { APIResponse, GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema, Ticket } from '../../domain/dtos';
+import { APIResponse, buildSucceededPaginatedResponse, buildSucceededSingleResponse, GetTicketsQuery, getTicketsQueryErrorConverter, GetTicketsQuerySchema, Ticket } from '../../domain/dtos';
 import { SimplifiedTicket } from '../../domain/dtos/ticket/simplified-ticket.dto';
-import { handleError, stringifyQueryParams } from '../utils';
+import { handleError, stringifyQueryParams, parsePositiveInt } from '../utils';
 import { Validator } from '../../domain/validator/validator.interface';
 import { createZodValidator } from '../../domain/validator/zod-validator.factory';
 import { TicketService } from '../../service/ticket.service';
@@ -26,19 +26,11 @@ export class TicketController {
     try {
       // Parse and validate query parameters
       const queryParams = this.parseQueryParams(req.query);
-      
-      // Call ticket service to get tickets
       const result = await this.ticketService.getAllAvailableTickets(queryParams);
-      
-      const response: APIResponse<SimplifiedTicket[]> = {
-        status: 'OK',
-        data: result.tickets,
-        perPage: queryParams.limit,
-        offset: queryParams.offset,
-        total: result.total,
-      };
-      
-      res.status(200).json(response);
+      res.status(200)
+        .json(
+          buildSucceededPaginatedResponse(result.tickets, queryParams.limit, queryParams.offset, result.total)
+        );
     } catch (error) {
       handleError(error, res);
     }
@@ -50,18 +42,7 @@ export class TicketController {
    */
   async getTicketById(req: Request, res: Response): Promise<void> {
     try {
-      // Parse ticket ID from route parameters
-      const ticketId = parseInt(req.params.id, 10);
-      
-      // Validate ticket ID
-      if (isNaN(ticketId) || ticketId <= 0) {
-        throw new InvalidRequestError({
-          id: {
-            issue: 'Invalid ticket ID. Must be a positive integer.',
-            detail: 'The ticket ID must be a valid positive integer.',
-          },
-        });
-      }
+      const ticketId = parsePositiveInt(req.params.id, 'id');
 
       // Call ticket service to get ticket
       const ticket = await this.ticketService.getTicketById(ticketId);
@@ -75,7 +56,10 @@ export class TicketController {
         data: ticket,
       };
 
-      res.status(200).json(response);
+      res.status(200)
+        .json(
+          buildSucceededSingleResponse(ticket)
+        );
     } catch (error) {
       handleError(error, res);
     }

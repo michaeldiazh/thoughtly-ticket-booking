@@ -2,7 +2,7 @@
  * DTOs for GET /event/:id endpoint (Event Detail)
  */
 
-import { BaseEventFields, VenueDetailResponse } from './common.dto';
+import { BaseEventFields, VenueDetailResponse } from '../common.dto';
 
 /**
  * Tier availability information

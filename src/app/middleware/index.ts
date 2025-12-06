@@ -13,7 +13,4 @@ import express, { Express } from 'express';
 export function setupMiddleware(app: Express): void {
   // JSON body parser
   app.use(express.json());
-  
-  // URL-encoded body parser
-  app.use(express.urlencoded({ extended: true }));
 }

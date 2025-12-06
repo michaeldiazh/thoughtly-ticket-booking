@@ -7,13 +7,9 @@
 import 'dotenv/config';
 
 import express, { Express } from 'express';
-import { createTicketRoutes } from './api/routes/ticket.routes';
-import { TicketController } from './api/controllers/ticket.controller';
-import { TicketService } from './service/ticket.service';
-import { MySQLConnector, MySQLConfig } from './service/database';
-import { createUserTicketRoutes } from './api/routes/user-ticket.route';
-import { UserTicketService } from './service/user-ticket.service';
-import { UserTicketController } from './api/controllers/user-ticket.controller';
+import { MySQLConnector, MySQLConfig } from './shared/database';
+import { createTicketRoutes, TicketService, TicketController } from './features/ticket';
+import { createUserTicketRoutes, UserTicketService, UserTicketController } from './features/user-ticket';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -33,8 +29,12 @@ const dbConfig: MySQLConfig = {
 };
 
 const db = new MySQLConnector(dbConfig);
+
+// Ticket feature
 const ticketService = new TicketService(db);
 const ticketController = new TicketController(ticketService);
+
+// User-ticket feature
 const userTicketService = new UserTicketService(db);
 const userTicketController = new UserTicketController(userTicketService);
 // Routes

@@ -4,7 +4,7 @@
  * Provides factory function to create UserTicketRequest instances for testing
  */
 
-import { UserTicketRequest } from '../../src/domain/dtos';
+import { UserTicketRequest } from '../../src/features/user-ticket/domain/dtos';
 
 /**
  * Creates a UserTicketRequest instance

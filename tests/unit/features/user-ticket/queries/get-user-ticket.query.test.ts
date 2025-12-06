@@ -2,7 +2,7 @@
  * Tests for Get User Ticket Query Builder
  */
 
-import { buildGetUserTicketQuery, buildGetUserTicketSQL } from '../../../../../src/service/query/user-ticket/get-user-ticket.query';
+import { buildGetUserTicketQuery, buildGetUserTicketSQL } from '../../../../../src/features/user-ticket/queries/get-user-ticket.query';
 
 describe('buildGetUserTicketQuery', () => {
   it('should build SELECT query with correct structure', () => {

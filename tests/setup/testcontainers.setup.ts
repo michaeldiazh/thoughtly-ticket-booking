@@ -5,7 +5,7 @@
  */
 
 import { MySqlContainer, StartedMySqlContainer } from '@testcontainers/mysql';
-import { MySQLConnector, MySQLConfig } from '../../src/service/database/mysql.connector';
+import { MySQLConnector, MySQLConfig } from '../../src/shared/database/mysql.connector';
 import * as fs from 'fs';
 import * as path from 'path';
 

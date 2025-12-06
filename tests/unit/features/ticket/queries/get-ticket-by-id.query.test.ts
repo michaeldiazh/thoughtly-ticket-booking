@@ -2,7 +2,7 @@
  * Tests for Get Ticket By ID Query Builder
  */
 
-import { buildTicketByIdQuery } from '../../../../../src/service/query/ticket/get-ticket-by-id.query';
+import { buildTicketByIdQuery } from '../../../../../src/features/ticket/queries/get-ticket-by-id.query';
 
 describe('buildTicketByIdQuery', () => {
   it('should build SELECT query with correct structure', () => {

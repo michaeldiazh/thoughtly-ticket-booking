@@ -2,7 +2,7 @@
  * Tests for query parameter normalization utility
  */
 
-import { stringifyQueryParams } from '../../../../src/api/utils/query-param.util';
+import { stringifyQueryParams } from '../../../../src/shared/utils/query-param.util';
 
 type TestCase = {
   description: string;

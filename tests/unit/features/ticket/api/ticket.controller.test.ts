@@ -3,18 +3,18 @@
  */
 
 import { Request, Response } from 'express';
-import { TicketController } from '../../../../src/api/controllers/ticket.controller';
-import { TicketService } from '../../../../src/service/ticket.service';
-import { InvalidQueryParameterError } from '../../../../src/domain/errors';
-import { handleError } from '../../../../src/api/utils';
+import { TicketController } from '../../../../../src/features/ticket/api/ticket.controller';
+import { TicketService } from '../../../../../src/features/ticket/service/ticket.service';
+import { InvalidQueryParameterError } from '../../../../../src/domain/errors';
+import { handleError } from '../../../../../src/shared/utils';
 
 // Mock dependencies
-jest.mock('../../../../src/api/utils', () => ({
-  ...jest.requireActual('../../../../src/api/utils'),
+jest.mock('../../../../../src/shared/utils', () => ({
+  ...jest.requireActual('../../../../../src/shared/utils'),
   handleError: jest.fn(),
 }));
 
-jest.mock('../../../../src/service/ticket.service');
+jest.mock('../../../../../src/features/ticket/service/ticket.service');
 
 const mockHandleError = handleError as jest.MockedFunction<typeof handleError>;
 

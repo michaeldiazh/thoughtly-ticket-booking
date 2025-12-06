@@ -5,12 +5,12 @@
  * Includes concurrency tests to verify double-booking prevention
  */
 
-import { UserTicketService } from '../../../src/service/user-ticket.service';
-import { getTestDatabase } from '../../setup/testcontainers.setup';
-import { UserTicketRequest, UserTicket } from '../../../src/domain/dtos';
-import { InsufficientTicketsError } from '../../../src/domain/errors';
-import { createUserTicketRequest } from '../../mocks/user-ticket-request.factory';
-import { MySQLConnector } from '../../../src/service/database/mysql.connector';
+import { UserTicketService } from '../../../../src/features/user-ticket/service/user-ticket.service';
+import { getTestDatabase } from '../../../setup/testcontainers.setup';
+import { UserTicketRequest, UserTicket } from '../../../../src/features/user-ticket/domain/dtos';
+import { InsufficientTicketsError } from '../../../../src/domain/errors';
+import { createUserTicketRequest } from '../../../mocks/user-ticket-request.factory';
+import { MySQLConnector } from '../../../../src/shared/database/mysql.connector';
 
 describe('UserTicketService Integration Tests', () => {
   let userTicketService: UserTicketService;

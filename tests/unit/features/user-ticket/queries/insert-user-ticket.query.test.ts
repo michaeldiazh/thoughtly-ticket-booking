@@ -2,8 +2,8 @@
  * Tests for Insert User Ticket Query Builder
  */
 
-import { buildInsertUserTicketQuery, buildInsertUserTicketSQL } from '../../../../../src/service/query/user-ticket/insert-user-ticket.query';
-import { UserTicketRequest } from '../../../../../src/domain/dtos';
+import { buildInsertUserTicketQuery, buildInsertUserTicketSQL } from '../../../../../src/features/user-ticket/queries/insert-user-ticket.query';
+import { UserTicketRequest } from '../../../../../src/features/user-ticket/domain/dtos';
 
 describe('buildInsertUserTicketQuery', () => {
   it('should build INSERT query with correct structure', () => {

@@ -3,7 +3,7 @@
  */
 
 import { Response } from 'express';
-import { handleError } from '../../../../src/api/utils/error-handler.util';
+import { handleError } from '../../../../src/shared/utils/error-handler.util';
 import {
   InvalidQueryParameterError,
   InvalidRequestError,

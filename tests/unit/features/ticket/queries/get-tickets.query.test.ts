@@ -5,9 +5,9 @@
 import {
   buildAvailableTicketsCountQuery,
   buildAvailableTicketsSelectQuery,
-} from '../../../../../src/service/query/ticket/get-tickets.query';
-import { GetTicketsQuery, SimplifiedTicket } from '../../../../../src/domain/dtos';
-import { OrderByConfig } from '../../../../../src/service/types';
+} from '../../../../../src/features/ticket/queries/get-tickets.query';
+import { GetTicketsQuery, SimplifiedTicket } from '../../../../../src/features/ticket/domain/dtos';
+import { OrderByConfig } from '../../../../../src/shared/types';
 
 describe('buildAvailableTicketsCountQuery', () => {
   it('should build COUNT query without WHERE clause when no filters', () => {

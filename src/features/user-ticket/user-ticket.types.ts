@@ -1,12 +1,28 @@
 /**
- * User Ticket
+ * User Ticket Types
  * 
- * User ticket information returned after successful ticket purchase
+ * Type definitions and Zod schemas for user ticket feature
  */
 
 import { z } from 'zod';
-import { preprocessToPositiveFloat } from '../../../shared/validator';
-import { convertMySQLDatetimeToISO8601 } from '../../../shared/utils/parse.util';
+import { preprocessToPositiveFloat } from '../../shared/validator';
+import { convertMySQLDatetimeToISO8601 } from '../../shared/utils/parse.util';
+
+/**
+ * Zod schema for UserTicketRequest
+ * Validates request body for booking tickets
+ */
+export const UserTicketRequestSchema = z.object({
+  ticketId: z.number().int().positive(),
+  userId: z.number().int().positive(),
+  quantity: z.number().int().positive().min(1),
+});
+
+/**
+ * Request body for booking tickets
+ * Type inferred from UserTicketRequestSchema to ensure type safety
+ */
+export type UserTicketRequest = z.infer<typeof UserTicketRequestSchema>;
 
 /**
  * Zod schema for UserTicket

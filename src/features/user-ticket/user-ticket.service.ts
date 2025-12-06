@@ -1,13 +1,13 @@
 import { ResultSetHeader, RowDataPacket, PoolConnection } from "mysql2/promise";
-import { MySQLConnector } from "../../../shared/database";
-import { UserTicketRequest } from "../domain";
-import { InsufficientTicketsError } from "../../../domain/errors";
-import { buildInsertUserTicketQuery } from "../queries/insert-user-ticket.query";
-import { buildUpdateTicketRemainingQuery } from "../../../features/ticket/queries/update-ticket-remaining.query";
-import { buildGetUserTicketQuery } from "../queries/get-user-ticket.query";
-import { UserTicket, UserTicketSchema } from "../domain/user-ticket";
-import { Validator } from "../../../shared/validator";
-import { createZodValidator, convertValidationErrorToInvalidRequestError } from "../../../shared/validator";
+import { MySQLConnector } from "../../shared/database";
+import { UserTicketRequest } from "./user-ticket.types";
+import { InsufficientTicketsError } from "../../domain/errors";
+import { buildInsertUserTicketQuery } from "./queries/insert-user-ticket.query";
+import { buildUpdateTicketRemainingQuery } from "../ticket/queries/update-ticket-remaining.query";
+import { buildGetUserTicketQuery } from "./queries/get-user-ticket.query";
+import { UserTicket, UserTicketSchema } from "./user-ticket.types";
+import { Validator } from "../../shared/validator";
+import { createZodValidator, convertValidationErrorToInvalidRequestError } from "../../shared/validator";
 
 export class UserTicketService {
     private userTicketValidator: Validator<UserTicket>;

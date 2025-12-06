@@ -4,7 +4,8 @@
  * Public API for the user-ticket feature module
  */
 
-export * from './api';
-export * from './service';
-export * from './domain';
+export * from './user-ticket.controller';
+export * from './user-ticket.routes';
+export * from './user-ticket.service';
+export * from './user-ticket.types';
 

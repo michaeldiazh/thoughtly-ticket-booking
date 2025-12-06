@@ -7,9 +7,9 @@
 
 export * from './types';
 export * from './common.dto';
-export * from './simplified-ticket.dto';
+export * from './ticket/simplified-ticket.dto';
 export * from './get-tickets-query.dto';
-export * from './get-ticket-by-id-response.dto';
+export * from './ticket/ticket.dto';
 export * from './book-ticket-request.dto';
 export * from './book-ticket-response.dto';
 export * from './get-events-response.dto';

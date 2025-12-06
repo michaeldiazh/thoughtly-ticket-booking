@@ -44,7 +44,7 @@ async function runSchemaMigrations(db: MySQLConnector): Promise<void> {
 /**
  * Load test data from test_data.sql file
  */
-async function loadTestData(db: MySQLConnector): Promise<void> {
+export async function loadTestData(db: MySQLConnector): Promise<void> {
   const testDataPath = path.join(__dirname, 'test_data.sql');
   const testData = fs.readFileSync(testDataPath, 'utf-8');
 

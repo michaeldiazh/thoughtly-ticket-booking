@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { Validator } from './validator.interface';
 
 /**
- * Creates a Validator from a ZodObject schema
+ * Creates a Validator from a Zod schema (ZodObject or ZodEffects)
  * 
  * @template T - The type that the Zod schema validates to
  * @param schema - The ZodObject schema to use for validation

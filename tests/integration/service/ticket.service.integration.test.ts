@@ -165,7 +165,6 @@ describe('TicketService Integration Tests', () => {
       // Validate using Zod schema to ensure structure is correct
       const validatedResult = TicketSchema.parse(result);
       
-      expect(validatedResult.eventId).toBe(expectedEventId);
       expect(validatedResult.event.id).toBe(expectedEventId);
 
       // Verify venue is correctly nested in event and is valid
@@ -191,7 +190,6 @@ describe('TicketService Integration Tests', () => {
       
       // All numeric fields should be numbers (validated by Zod)
       expect(Number.isInteger(validatedResult.id)).toBe(true);
-      expect(Number.isInteger(validatedResult.eventId)).toBe(true);
       expect(Number.isInteger(validatedResult.capacity)).toBe(true);
       expect(Number.isInteger(validatedResult.remaining)).toBe(true);
       expect(typeof validatedResult.price).toBe('number');

@@ -23,7 +23,6 @@ describe('buildTicketByIdQuery', () => {
     const result = buildTicketByIdQuery(ticketId);
 
     expect(result.sql).toContain('t.id');
-    expect(result.sql).toContain('e.id AS eventId');
     expect(result.sql).toContain('pt.code AS tierCode');
     expect(result.sql).toContain('pt.display_name AS tierDisplayName');
     expect(result.sql).toContain('t.capacity');

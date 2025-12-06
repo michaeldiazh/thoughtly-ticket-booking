@@ -205,7 +205,6 @@ Get a single ticket by ID with complete event and venue information.
   "status": "OK",
   "data": {
     "id": 1,
-    "eventId": 5,
     "tierCode": "VIP",
     "tierDisplayName": "VIP",
     "capacity": 100,

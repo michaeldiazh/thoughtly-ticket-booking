@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserTicketService } from "../../service/user-ticket.service";
-import { UserTicket, UserTicketRequest } from "../../domain/dtos";
+import { buildSucceededSingleResponse, UserTicket, UserTicketRequest } from "../../domain/dtos";
 import { handleError } from "../utils";
 import { Validator } from "../../domain/validator/validator.interface";
 import { createZodValidator } from "../../domain/validator/zod-validator.factory";
@@ -19,7 +19,10 @@ export class UserTicketController {
         try {
             const request: UserTicketRequest = this.userTicketRequestValidator.validate(req.body);
             const userTicket: UserTicket = await this.userTicketService.addNewUserTicket(request);
-            res.status(201).json(userTicket);
+            res.status(201)
+                .json(
+                    buildSucceededSingleResponse(userTicket)
+                );
         } catch (error) {
             handleError(error, res);
         }

@@ -1,4 +1,4 @@
-import { SucceededPaginatedResponse } from "./types";
+import { ErrorResponse, Exception, SucceededPaginatedResponse, SucceededSingleResponse } from "./types";
 /**
  * Common DTOs shared across multiple endpoints
  */
@@ -40,5 +40,19 @@ export const buildSucceededPaginatedResponse = <T>(data: T[], perPage: number, o
     perPage,
     offset,
     total,
+  };
+}
+
+export const buildSucceededSingleResponse = <T>(data: T): SucceededSingleResponse<T> => {
+  return {
+    status: 'OK',
+    data,
+  };
+}
+
+export const buildErrorResponse = <E extends Exception>(error: E): ErrorResponse<E> => {
+  return {
+    status: 'ERROR',
+    error,
   };
 }

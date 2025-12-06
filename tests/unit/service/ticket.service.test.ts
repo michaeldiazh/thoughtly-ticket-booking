@@ -222,7 +222,6 @@ describe('TicketService', () => {
 
     const mockDbResult = {
       id: 1,
-      eventId: 1,
       tierCode: 'VIP',
       tierDisplayName: 'VIP',
       capacity: 50,
@@ -235,7 +234,6 @@ describe('TicketService', () => {
 
     const expectedTicket: Ticket = {
       id: 1,
-      eventId: 1,
       tierCode: 'VIP',
       tierDisplayName: 'VIP',
       capacity: 50,
@@ -332,7 +330,6 @@ describe('TicketService', () => {
       expect(result).not.toBeNull();
       // If validation passes, all required fields should be present
       expect(result).toHaveProperty('id');
-      expect(result).toHaveProperty('eventId');
       expect(result).toHaveProperty('tierCode');
       expect(result).toHaveProperty('tierDisplayName');
       expect(result).toHaveProperty('capacity');

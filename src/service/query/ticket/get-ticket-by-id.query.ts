@@ -58,7 +58,6 @@ const buildTicketByIdSql = (): string => {
   return `
     SELECT 
       t.id,
-      e.id AS eventId,
       pt.code AS tierCode,
       pt.display_name AS tierDisplayName,
       t.capacity,

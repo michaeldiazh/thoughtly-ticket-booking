@@ -55,7 +55,6 @@ export interface StringifiedTicket {
 export const TicketSchema = 
   z.object({
     id: z.number().int().positive(),
-    eventId: z.number().int().positive(),
     tierCode: z.string().min(1),
     tierDisplayName: z.string().min(1),
     capacity: z.number().int().nonnegative(),

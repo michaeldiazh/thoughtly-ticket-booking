@@ -5,7 +5,7 @@
  */
 
 import { Response } from 'express';
-import { APIResponse } from '../../domain/dtos';
+import { APIResponse, buildErrorResponse } from '../../domain/dtos';
 import {
   AppError,
   InvalidQueryParameterError,
@@ -13,6 +13,7 @@ import {
   TicketNotFoundError,
   EventNotFoundError,
   InsufficientTicketsError,
+  ErrorToException,
 } from '../../domain/errors';
 
 /**
@@ -37,10 +38,7 @@ const errorHandlers: Array<{
       error instanceof InvalidQueryParameterError || error instanceof InvalidRequestError,
     handler: (error: InvalidQueryParameterError | InvalidRequestError) => ({
       statusCode: 400,
-      response: {
-        status: 'ERROR',
-        error: error.toException(),
-      },
+      response: buildErrorResponse(error.toException()),
     }),
   },
   // Not found errors (404 Not Found)
@@ -49,10 +47,7 @@ const errorHandlers: Array<{
       error instanceof TicketNotFoundError || error instanceof EventNotFoundError,
     handler: (error: TicketNotFoundError | EventNotFoundError) => ({
       statusCode: 404,
-      response: {
-        status: 'ERROR',
-        error: error.toException(),
-      },
+      response: buildErrorResponse(error.toException()),
     }),
   },
   // Conflict errors (409 Conflict)
@@ -61,10 +56,7 @@ const errorHandlers: Array<{
       error instanceof InsufficientTicketsError,
     handler: (error: InsufficientTicketsError) => ({
       statusCode: 409,
-      response: {
-        status: 'ERROR',
-        error: error.toException(),
-      },
+      response: buildErrorResponse(error.toException()),
     }),
   },
   // Other AppError instances (500 Internal Server Error)
@@ -72,24 +64,18 @@ const errorHandlers: Array<{
     check: (error): error is AppError => error instanceof AppError,
     handler: (error: AppError) => ({
       statusCode: 500,
-      response: {
-        status: 'ERROR',
-        error: error.toException(),
-      },
+      response: buildErrorResponse(error.toException()),
     }),
   },
   // Errors with toException method
   {
     check: (error): error is Error & { toException: () => any } =>
       error instanceof Error && 'toException' in error,
-    handler: (error: Error & { toException: () => any }) => {
+    handler: (error: Error & ErrorToException) => {
       const statusCode = error.constructor.name.includes('NotFound') ? 404 : 500;
       return {
         statusCode,
-        response: {
-          status: 'ERROR',
-          error: error.toException(),
-        },
+        response: buildErrorResponse(error.toException()),
       };
     },
   },
@@ -108,19 +94,6 @@ export function handleError(error: unknown, res: Response): void {
 
   if (handlerEntry) {
     const { statusCode, response } = handlerEntry.handler(error);
-    
-    // Log 500 errors to console for debugging
-    if (statusCode === 500) {
-      console.error('=== 500 Internal Server Error ===');
-      console.error('Error:', error);
-      if (error instanceof Error) {
-        console.error('Error Message:', error.message);
-        console.error('Error Stack:', error.stack);
-      }
-      console.error('Response:', response);
-      console.error('================================');
-    }
-    
     res.status(statusCode).json(response);
     return;
   }
@@ -133,19 +106,5 @@ export function handleError(error: unknown, res: Response): void {
       message: 'An unexpected error occurred',
     },
   };
-  
-  // Log unknown errors to console
-  console.error('=== 500 Internal Server Error (Unknown) ===');
-  console.error('Error:', error);
-  if (error instanceof Error) {
-    console.error('Error Message:', error.message);
-    console.error('Error Stack:', error.stack);
-  } else {
-    console.error('Error Type:', typeof error);
-    console.error('Error Value:', JSON.stringify(error, null, 2));
-  }
-  console.error('Response:', response);
-  console.error('==========================================');
-  
   res.status(500).json(response);
 }

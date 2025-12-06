@@ -2,17 +2,17 @@
  * Tests for Ticket Service
  */
 
-import { TicketService } from '../../../../../src/features/ticket/ticket.service';
-import { MySQLConnector } from '../../../../../src/shared/database/mysql.connector';
-import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from '../../../../../src/features/ticket/queries/get-tickets.query';
-import { buildTicketByIdQuery } from '../../../../../src/features/ticket/queries/get-ticket-by-id.query';
-import { GetTicketsQuery, SimplifiedTicket, Ticket } from '../../../../../src/features/ticket/ticket.types';
-import { OrderByConfig } from '../../../../../src/shared/types';
+import { TicketService } from '../../../../src/features/ticket/ticket.service';
+import { MySQLConnector } from '../../../../src/shared/database/mysql.connector';
+import { buildAvailableTicketsCountQuery, buildAvailableTicketsSelectQuery } from '../../../../src/features/ticket/queries/get-tickets.query';
+import { buildTicketByIdQuery } from '../../../../src/features/ticket/queries/get-ticket-by-id.query';
+import { GetTicketsQuery, SimplifiedTicket, Ticket } from '../../../../src/features/ticket/ticket.types';
+import { OrderByConfig } from '../../../../src/shared/types';
 
 // Mock the MySQLConnector
-jest.mock('../../../../../src/shared/database/mysql.connector');
-jest.mock('../../../../../src/features/ticket/queries/get-tickets.query');
-jest.mock('../../../../../src/features/ticket/queries/get-ticket-by-id.query');
+jest.mock('../../../../src/shared/database/mysql.connector');
+jest.mock('../../../../src/features/ticket/queries/get-tickets.query');
+jest.mock('../../../../src/features/ticket/queries/get-ticket-by-id.query');
 
 describe('TicketService', () => {
   let ticketService: TicketService;

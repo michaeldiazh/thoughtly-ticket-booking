@@ -3,18 +3,18 @@
  */
 
 import { Request, Response } from 'express';
-import { EventController } from '../../../../../src/features/event/event.controller';
-import { EventService } from '../../../../../src/features/event/event.service';
-import { InvalidQueryParameterError } from '../../../../../src/domain/errors';
-import { handleError } from '../../../../../src/shared/utils';
+import { EventController } from '../../../../src/features/event/event.controller';
+import { EventService } from '../../../../src/features/event/event.service';
+import { InvalidQueryParameterError } from '../../../../src/domain/errors';
+import { handleError } from '../../../../src/shared/utils';
 
 // Mock dependencies
-jest.mock('../../../../../src/shared/utils', () => ({
-  ...jest.requireActual('../../../../../src/shared/utils'),
+jest.mock('../../../../src/shared/utils', () => ({
+  ...jest.requireActual('../../../../src/shared/utils'),
   handleError: jest.fn(),
 }));
 
-jest.mock('../../../../../src/features/event/service/event.service');
+jest.mock('../../../../src/features/event/event.service');
 
 const mockHandleError = handleError as jest.MockedFunction<typeof handleError>;
 

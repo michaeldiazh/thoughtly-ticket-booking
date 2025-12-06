@@ -2,20 +2,20 @@
  * Tests for User Ticket Service
  */
 
-import { UserTicketService } from '../../../../../src/features/user-ticket/user-ticket.service';
-import { MySQLConnector } from '../../../../../src/shared/database/mysql.connector';
-import { buildInsertUserTicketQuery } from '../../../../../src/features/user-ticket/queries/insert-user-ticket.query';
-import { buildGetUserTicketQuery } from '../../../../../src/features/user-ticket/queries/get-user-ticket.query';
-import { buildUpdateTicketRemainingQuery } from '../../../../../src/features/ticket/queries/update-ticket-remaining.query';
-import { UserTicketRequest, UserTicket } from '../../../../../src/features/user-ticket/user-ticket.types';
-import { InsufficientTicketsError } from '../../../../../src/domain/errors';
+import { UserTicketService } from '../../../../src/features/user-ticket/user-ticket.service';
+import { MySQLConnector } from '../../../../src/shared/database/mysql.connector';
+import { buildInsertUserTicketQuery } from '../../../../src/features/user-ticket/queries/insert-user-ticket.query';
+import { buildGetUserTicketQuery } from '../../../../src/features/user-ticket/queries/get-user-ticket.query';
+import { buildUpdateTicketRemainingQuery } from '../../../../src/features/ticket/queries/update-ticket-remaining.query';
+import { UserTicketRequest, UserTicket } from '../../../../src/features/user-ticket/user-ticket.types';
+import { InsufficientTicketsError } from '../../../../src/domain/errors';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 
 // Mock the MySQLConnector and query builders
-jest.mock('../../../../../src/shared/database/mysql.connector');
-jest.mock('../../../../../src/features/user-ticket/queries/insert-user-ticket.query');
-jest.mock('../../../../../src/features/user-ticket/queries/get-user-ticket.query');
-jest.mock('../../../../../src/features/ticket/queries/update-ticket-remaining.query');
+jest.mock('../../../../src/shared/database/mysql.connector');
+jest.mock('../../../../src/features/user-ticket/queries/insert-user-ticket.query');
+jest.mock('../../../../src/features/user-ticket/queries/get-user-ticket.query');
+jest.mock('../../../../src/features/ticket/queries/update-ticket-remaining.query');
 
 describe('UserTicketService', () => {
   let userTicketService: UserTicketService;

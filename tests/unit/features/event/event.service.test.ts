@@ -2,18 +2,18 @@
  * Tests for Event Service
  */
 
-import { EventService } from '../../../../../src/features/event/event.service';
-import { MySQLConnector } from '../../../../../src/shared/database/mysql.connector';
-import { buildEventsCountQuery, buildEventsSelectQuery } from '../../../../../src/features/event/queries/get-events.query';
-import { getEventByIdQuery } from '../../../../../src/features/event/queries/get-event-by-id.query';
-import { GetEventsQuery, EventListItem, Event } from '../../../../../src/features/event/event.types';
-import { OrderByConfig } from '../../../../../src/shared/types';
-import { EventNotFoundError } from '../../../../../src/domain/errors/event.errors';
+import { EventService } from '../../../../src/features/event/event.service';
+import { MySQLConnector } from '../../../../src/shared/database/mysql.connector';
+import { buildEventsCountQuery, buildEventsSelectQuery } from '../../../../src/features/event/queries/get-events.query';
+import { getEventByIdQuery } from '../../../../src/features/event/queries/get-event-by-id.query';
+import { GetEventsQuery, EventListItem, Event } from '../../../../src/features/event/event.types';
+import { OrderByConfig } from '../../../../src/shared/types';
+import { EventNotFoundError } from '../../../../src/domain/errors/event.errors';
 
 // Mock the MySQLConnector
-jest.mock('../../../../../src/shared/database/mysql.connector');
-jest.mock('../../../../../src/features/event/queries/get-events.query');
-jest.mock('../../../../../src/features/event/queries/get-event-by-id.query');
+jest.mock('../../../../src/shared/database/mysql.connector');
+jest.mock('../../../../src/features/event/queries/get-events.query');
+jest.mock('../../../../src/features/event/queries/get-event-by-id.query');
 
 describe('EventService', () => {
   let eventService: EventService;

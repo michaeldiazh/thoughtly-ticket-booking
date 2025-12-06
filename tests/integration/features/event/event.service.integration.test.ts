@@ -4,10 +4,9 @@
  * Tests using real MySQL 8.4 database via testcontainers
  */
 
-import { EventService } from '../../../../src/features/event/service/event.service';
+import { EventService } from '../../../../src/features/event/event.service';
 import { getTestDatabase, loadTestData } from '../../../setup/testcontainers.setup';
-import { GetEventsQuery } from '../../../../src/features/event/domain/dtos';
-import { EventSchema, EventListItemSchema } from '../../../../src/features/event/domain/dtos';
+import { GetEventsQuery, EventSchema, EventListItemSchema } from '../../../../src/features/event/event.types';
 import { EventNotFoundError } from '../../../../src/domain/errors/event.errors';
 
 describe('EventService Integration Tests', () => {

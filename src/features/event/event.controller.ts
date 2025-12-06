@@ -5,11 +5,11 @@
  */
 
 import { Request, Response } from 'express';
-import { GetEventsQuery, GetEventsQuerySchema } from '../domain/dtos';
-import { buildSucceededPaginatedResponse, buildSucceededSingleResponse } from '../../../domain/common.dto';
-import { handleError, stringifyQueryParams, parsePositiveInt } from '../../../shared/utils';
-import { Validator, createZodValidator, convertValidationErrorToInvalidQueryParameterError } from '../../../shared/validator';
-import { EventService } from '../service/event.service';
+import { GetEventsQuery, GetEventsQuerySchema } from './event.types';
+import { buildSucceededPaginatedResponse, buildSucceededSingleResponse } from '../../domain/common.dto';
+import { handleError, stringifyQueryParams, parsePositiveInt } from '../../shared/utils';
+import { Validator, createZodValidator, convertValidationErrorToInvalidQueryParameterError } from '../../shared/validator';
+import { EventService } from './event.service';
 
 export class EventController {
     private getEventsValidator: Validator<GetEventsQuery>;

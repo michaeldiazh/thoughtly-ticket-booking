@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { SimplifiedEvent } from '../event/domain/dtos/simplified-event.dto';
+import { SimplifiedEvent } from '../event/event.types';
 import { VenueDetailResponse } from '../../domain/common.dto';
 import { preprocessCommaSeparatedStrings, preprocessCommaSeparatedPositiveInts, iso8601DatetimeSchema, positivePriceSchema, positiveIntIdSchema, nonEmptyStringSchema, nonNegativeIntSchema, nullableStringSchema, countryCodeSchema, arrayOfPositiveIntIdsSchema, arrayOfNonEmptyStringsSchema } from '../../shared/validator';
 import { parseNonNegativeInt, parsePositiveInt } from '../../shared/utils';

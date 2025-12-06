@@ -4,7 +4,7 @@
  * Raw SQL queries for GET /event endpoint
  */
 
-import { GetEventsQuery, EventListItem } from '../domain/dtos';
+import { GetEventsQuery, EventListItem } from '../event.types';
 import { QueryFilterMap, OrderByConfig, QueryResult, WhereParameterData } from '../../../shared/types';
 
 /**

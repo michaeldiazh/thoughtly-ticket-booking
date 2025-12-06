@@ -1,12 +1,10 @@
-import { EventNotFoundError } from "../../../domain/errors/event.errors";
-import { MySQLConnector } from "../../../shared/database";
-import { OrderByConfig } from "../../../shared/types";
-import { createZodValidator, Validator } from "../../../shared/validator";
-import { eventErrorConverter, Event, EventSchema } from "../domain/dtos/event.dto";
-import { GetEventsQuery } from "../domain/dtos/get-events-query.dto";
-import { EventListItem } from "../domain/dtos/simplified-event.dto";
-import { getEventByIdQuery } from "../queries/get-event-by-id.query";
-import { buildEventsCountQuery, buildEventsSelectQuery } from "../queries/get-events.query";
+import { EventNotFoundError } from "../../domain/errors/event.errors";
+import { MySQLConnector } from "../../shared/database";
+import { OrderByConfig } from "../../shared/types";
+import { createZodValidator, Validator, convertValidationErrorToInvalidRequestError } from "../../shared/validator";
+import { Event, EventSchema, GetEventsQuery, EventListItem } from "./event.types";
+import { getEventByIdQuery } from "./queries/get-event-by-id.query";
+import { buildEventsCountQuery, buildEventsSelectQuery } from "./queries/get-events.query";
 
 export class EventService {
     private eventValidator: Validator<Event>;
@@ -14,7 +12,7 @@ export class EventService {
         private readonly connector: MySQLConnector,
     ) {
         this.connector = connector;
-        this.eventValidator = createZodValidator<Event>(EventSchema, eventErrorConverter);
+        this.eventValidator = createZodValidator<Event>(EventSchema, convertValidationErrorToInvalidRequestError);
     }
 
     async getEvents(query: GetEventsQuery, orderBy?: OrderByConfig<EventListItem>[]): Promise<{

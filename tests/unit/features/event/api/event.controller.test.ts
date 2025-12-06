@@ -3,8 +3,8 @@
  */
 
 import { Request, Response } from 'express';
-import { EventController } from '../../../../../src/features/event/api/event.controller';
-import { EventService } from '../../../../../src/features/event/service/event.service';
+import { EventController } from '../../../../../src/features/event/event.controller';
+import { EventService } from '../../../../../src/features/event/event.service';
 import { InvalidQueryParameterError } from '../../../../../src/domain/errors';
 import { handleError } from '../../../../../src/shared/utils';
 

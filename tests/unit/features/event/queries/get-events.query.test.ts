@@ -6,7 +6,7 @@ import {
   buildEventsCountQuery,
   buildEventsSelectQuery,
 } from '../../../../../src/features/event/queries/get-events.query';
-import { GetEventsQuery, EventListItem } from '../../../../../src/features/event/domain/dtos';
+import { GetEventsQuery, EventListItem } from '../../../../../src/features/event/event.types';
 import { OrderByConfig } from '../../../../../src/shared/types';
 
 describe('buildEventsCountQuery', () => {

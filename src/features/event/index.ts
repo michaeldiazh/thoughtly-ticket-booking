@@ -4,6 +4,7 @@
  * Public API for the event feature module
  */
 
-export * from './api';
-export * from './service';
-export * from './domain';
+export * from './event.controller';
+export * from './event.routes';
+export * from './event.service';
+export * from './event.types';

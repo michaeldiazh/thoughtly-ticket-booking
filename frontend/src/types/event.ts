@@ -56,6 +56,7 @@ export interface VenueDetailResponse {
  */
 export interface TierAvailability {
   ticketId: number;
+  tierDisplayName: string;
   price: number | string; // Backend may return as string from MySQL DECIMAL
   remaining: number;
   capacity: number;

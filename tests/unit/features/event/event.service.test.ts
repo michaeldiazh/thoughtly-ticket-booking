@@ -223,6 +223,7 @@ describe('EventService', () => {
       tiers: {
         VIP: {
           ticketId: 1,
+          tierDisplayName: 'VIP',
           price: 100.00,
           remaining: 45,
           capacity: 50,

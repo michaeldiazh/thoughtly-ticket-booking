@@ -179,26 +179,26 @@ export function EventDetailPage({ eventId, onBack }: EventDetailPageProps) {
             <div className="booking-form">
               <div className="form-group">
                 <label htmlFor="tier-select">Select Tier:</label>
-                <select
-                  id="tier-select"
-                  value={selectedTierCode}
-                  onChange={(e) => {
-                    setSelectedTierCode(e.target.value);
-                    setQuantity('1');
-                  }}
-                >
-                  <option value="">-- Choose a tier --</option>
-                  {tiers.map(([tierCode, tier]) => (
-                    <option 
-                      key={tierCode} 
-                      value={tierCode}
-                      disabled={tier.remaining === 0}
-                    >
-                      {tierCode} - ${formatPrice(tier.price)} 
-                      {tier.remaining === 0 ? ' (Sold Out)' : ` (${tier.remaining} available)`}
-                    </option>
-                  ))}
-                </select>
+                  <select
+                    id="tier-select"
+                    value={selectedTierCode}
+                    onChange={(e) => {
+                      setSelectedTierCode(e.target.value);
+                      setQuantity('1');
+                    }}
+                  >
+                    <option value="">-- Choose a tier --</option>
+                    {tiers.map(([tierCode, tier]) => (
+                      <option 
+                        key={tierCode} 
+                        value={tierCode}
+                        disabled={tier.remaining === 0}
+                      >
+                        {tier.tierDisplayName} - ${formatPrice(tier.price)} 
+                        {tier.remaining === 0 ? ' (Sold Out)' : ` (${tier.remaining} available)`}
+                      </option>
+                    ))}
+                  </select>
               </div>
 
               <div className="form-group">

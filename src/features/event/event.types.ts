@@ -60,6 +60,7 @@ export interface TierAvailability {
  */
 export const TierAvailabilitySchema = z.object({
   ticketId: positiveIntIdSchema,
+  tierDisplayName: nonEmptyStringSchema,
   price: positivePriceSchema,
   remaining: nonNegativeIntSchema,
   capacity: positiveIntIdSchema,

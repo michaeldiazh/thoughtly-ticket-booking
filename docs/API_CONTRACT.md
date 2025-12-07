@@ -514,18 +514,21 @@ Get a single event by ID with complete details including tier availability infor
     "tiers": {
       "VIP": {
         "ticketId": 1,
+        "tierDisplayName": "VIP",
         "price": 10.00,
         "remaining": 45,
         "capacity": 100
       },
       "FRONT_ROW": {
         "ticketId": 2,
+        "tierDisplayName": "VIP",
         "price": 12.00,
         "remaining": 20,
         "capacity": 50
       },
       "GA": {
         "ticketId": 3,
+        "tierDisplayName": "VIP",
         "price": 2.00,
         "remaining": 200,
         "capacity": 500

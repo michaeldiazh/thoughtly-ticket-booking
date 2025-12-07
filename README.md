@@ -22,6 +22,28 @@ This is an end-to-end ticket booking application with a React + TypeScript front
 - MySQL 8.4 (for production, can use in-memory for development)
 - Docker and Docker Compose (for integration testing and load testing)
 
+### Environment Variables
+
+The application uses environment variables for configuration. Create a `.env` file in the project root (you can copy `.env.example` as a template):
+
+```bash
+cp .env.example .env
+```
+
+**Required Environment Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port number | `3000` |
+| `DB_HOST` | MySQL database host | `localhost` |
+| `DB_PORT` | MySQL database port | `3306` |
+| `DB_USER` | MySQL database user | `root` |
+| `DB_PASSWORD` | MySQL database password | (empty) |
+| `DB_NAME` | MySQL database name | `thoughtly_ticket_booking` |
+| `DB_CONNECTION_LIMIT` | Database connection pool size | `10` |
+
+All environment variables have sensible defaults, so you can run the application without a `.env` file for local development. For production, configure these variables appropriately.
+
 ### Backend Setup
 
 1. Install backend dependencies:

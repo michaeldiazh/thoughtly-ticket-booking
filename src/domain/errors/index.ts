@@ -8,5 +8,6 @@
 export * from './base.error';
 export * from './ticket.errors';
 export * from './event.errors';
+export * from './user.errors';
 export * from './validation.errors';
 

@@ -4,6 +4,7 @@
  */
 
 import type { GetEventsQuery, Event } from '../types/event';
+import type { SimplifiedUser } from '../types/user';
 
 export interface ApiResponse<T> {
   status: 'OK' | 'ERROR';
@@ -77,6 +78,26 @@ export async function getEvents(params?: Partial<GetEventsQuery>): Promise<Pagin
  */
 export async function getEventById(id: number): Promise<ApiResponse<Event>> {
   const url = `${API_BASE_URL}/event/${id}`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Get all users (simplified)
+ */
+export async function getUsers(): Promise<ApiResponse<SimplifiedUser[]>> {
+  const url = `${API_BASE_URL}/user`;
   
   const response = await fetch(url, {
     method: 'GET',

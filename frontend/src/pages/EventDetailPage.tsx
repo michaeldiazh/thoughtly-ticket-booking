@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { getEventById } from '../services/api';
-import type { Event, TierAvailability } from '../types/event';
+import type { Event } from '../types/event';
 import './EventDetailPage.css';
 
 interface EventDetailPageProps {

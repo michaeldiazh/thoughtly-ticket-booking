@@ -9,6 +9,7 @@ import { MySQLConnector } from '../shared/database';
 import { TicketService, TicketController } from '../features/ticket';
 import { UserTicketService, UserTicketController } from '../features/user-ticket';
 import { EventService, EventController } from '../features/event';
+import { UserService, UserController } from '../features/user';
 import { setupMiddleware } from './middleware';
 import { setupRoutes } from './routes';
 import { createDatabaseConfig } from './config/database.config';
@@ -37,8 +38,11 @@ export function createApp(): Express {
   const eventService = new EventService(db);
   const eventController = new EventController(eventService);
 
+  const userService = new UserService(db);
+  const userController = new UserController(userService);
+
   // Setup routes
-  setupRoutes(app, ticketController, userTicketController, eventController);
+  setupRoutes(app, ticketController, userTicketController, eventController, userController);
 
   return app;
 }

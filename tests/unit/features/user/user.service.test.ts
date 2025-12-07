@@ -118,12 +118,23 @@ describe('UserService', () => {
       region: 'NY',
       countryCode: 'US',
       timezone: 'America/New_York',
+      userTickets: [
+        {
+          userTicketId: 1,
+          eventName: 'Summer Concert',
+          venueName: 'Madison Square Garden',
+          tier: 'VIP',
+          ticketAmount: 2,
+          totalPrice: 200.00,
+          datePurchased: '2024-07-15T14:30:00Z',
+        },
+      ],
     };
 
-    it('should return a user by ID', async () => {
+    it('should return a user by ID with user tickets', async () => {
       const userId = 1;
       const mockQuery = {
-        sql: 'SELECT id, first_name AS \'firstName\', last_name AS \'lastName\', address, city, region, country_code AS \'countryCode\', timezone FROM user WHERE id = ?',
+        sql: expect.stringContaining('SELECT'),
         params: [userId],
       };
 
@@ -140,7 +151,7 @@ describe('UserService', () => {
     it('should throw UserNotFoundError when user not found', async () => {
       const userId = 999;
       const mockQuery = {
-        sql: 'SELECT id, first_name AS \'firstName\', last_name AS \'lastName\', address, city, region, country_code AS \'countryCode\', timezone FROM user WHERE id = ?',
+        sql: expect.stringContaining('SELECT'),
         params: [userId],
       };
 
@@ -155,7 +166,7 @@ describe('UserService', () => {
     it('should throw UserNotFoundError when user is undefined', async () => {
       const userId = 999;
       const mockQuery = {
-        sql: 'SELECT id, first_name AS \'firstName\', last_name AS \'lastName\', address, city, region, country_code AS \'countryCode\', timezone FROM user WHERE id = ?',
+        sql: expect.stringContaining('SELECT'),
         params: [userId],
       };
 
@@ -168,7 +179,7 @@ describe('UserService', () => {
     it('should validate user data and throw error on invalid data', async () => {
       const userId = 1;
       const mockQuery = {
-        sql: 'SELECT id, first_name AS \'firstName\', last_name AS \'lastName\', address, city, region, country_code AS \'countryCode\', timezone FROM user WHERE id = ?',
+        sql: expect.stringContaining('SELECT'),
         params: [userId],
       };
 
@@ -184,10 +195,38 @@ describe('UserService', () => {
       await expect(userService.getUserById(userId)).rejects.toThrow();
     });
 
-    it('should handle different user IDs correctly', async () => {
+    it('should handle user with empty user tickets array', async () => {
+      const userId = 1;
+      const mockQuery = {
+        sql: expect.stringContaining('SELECT'),
+        params: [userId],
+      };
+
+      const userWithNoTickets: User = {
+        id: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main Street',
+        city: 'New York',
+        region: 'NY',
+        countryCode: 'US',
+        timezone: 'America/New_York',
+        userTickets: [],
+      };
+
+      (getUserByIdQuery as jest.Mock).mockReturnValue(mockQuery);
+      mockDb.queryOne.mockResolvedValue(userWithNoTickets);
+
+      const result = await userService.getUserById(userId);
+
+      expect(result).toEqual(userWithNoTickets);
+      expect(result.userTickets).toEqual([]);
+    });
+
+    it('should handle user with multiple user tickets', async () => {
       const userId = 42;
       const mockQuery = {
-        sql: 'SELECT id, first_name AS \'firstName\', last_name AS \'lastName\', address, city, region, country_code AS \'countryCode\', timezone FROM user WHERE id = ?',
+        sql: expect.stringContaining('SELECT'),
         params: [userId],
       };
 
@@ -200,6 +239,26 @@ describe('UserService', () => {
         region: 'CA',
         countryCode: 'US',
         timezone: 'America/Los_Angeles',
+        userTickets: [
+          {
+            userTicketId: 10,
+            eventName: 'Winter Festival',
+            venueName: 'Red Rocks',
+            tier: 'General',
+            ticketAmount: 1,
+            totalPrice: 50.00,
+            datePurchased: '2024-12-20T10:00:00Z',
+          },
+          {
+            userTicketId: 11,
+            eventName: 'Summer Concert',
+            venueName: 'Madison Square Garden',
+            tier: 'VIP',
+            ticketAmount: 2,
+            totalPrice: 300.00,
+            datePurchased: '2024-07-15T14:30:00Z',
+          },
+        ],
       };
 
       (getUserByIdQuery as jest.Mock).mockReturnValue(mockQuery);
@@ -208,6 +267,7 @@ describe('UserService', () => {
       const result = await userService.getUserById(userId);
 
       expect(result).toEqual(differentUser);
+      expect(result.userTickets).toHaveLength(2);
       expect(getUserByIdQuery).toHaveBeenCalledWith(42);
     });
   });

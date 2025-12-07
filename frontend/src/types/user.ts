@@ -15,7 +15,30 @@ export interface SimplifiedUser {
 }
 
 /**
- * User - Alias for SimplifiedUser (used in context)
- * Full user details available via GET /api/v1/user/:id
+ * UserTicketInfo - User ticket information in user detail response
  */
-export type User = SimplifiedUser;
+export interface UserTicketInfo {
+  userTicketId: number;
+  eventName: string;
+  venueName: string;
+  tier: string;
+  ticketAmount: number;
+  totalPrice: number;
+  datePurchased: string; // ISO 8601 format
+}
+
+/**
+ * User - Complete user information with user tickets
+ * Returned from GET /api/v1/user/:id
+ */
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  region: string | null;
+  countryCode: string;
+  timezone: string;
+  userTickets: UserTicketInfo[];
+}

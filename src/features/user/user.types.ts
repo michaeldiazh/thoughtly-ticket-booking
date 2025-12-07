@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { positiveIntIdSchema, nonEmptyStringSchema, nullableStringSchema, countryCodeSchema } from '../../shared/validator';
+import { positiveIntIdSchema, nonEmptyStringSchema, nullableStringSchema, countryCodeSchema, positivePriceSchema, iso8601DatetimeSchema } from '../../shared/validator';
 
 /**
  * Zod schema for SimplifiedUser
@@ -25,8 +25,27 @@ export const SimplifiedUserSchema = z.object({
 export type SimplifiedUser = z.infer<typeof SimplifiedUserSchema>;
 
 /**
+ * Zod schema for UserTicketInfo
+ * User ticket information in user detail response
+ */
+export const UserTicketInfoSchema = z.object({
+  userTicketId: positiveIntIdSchema,
+  eventName: nonEmptyStringSchema,
+  venueName: nonEmptyStringSchema,
+  tier: nonEmptyStringSchema,
+  ticketAmount: positiveIntIdSchema,
+  totalPrice: positivePriceSchema,
+  datePurchased: iso8601DatetimeSchema,
+});
+
+/**
+ * Type inference from UserTicketInfoSchema
+ */
+export type UserTicketInfo = z.infer<typeof UserTicketInfoSchema>;
+
+/**
  * Zod schema for User
- * Complete user information
+ * Complete user information with user tickets
  */
 export const UserSchema = z.object({
   id: positiveIntIdSchema,
@@ -37,6 +56,7 @@ export const UserSchema = z.object({
   region: nullableStringSchema,
   countryCode: countryCodeSchema,
   timezone: nonEmptyStringSchema,
+  userTickets: z.array(UserTicketInfoSchema),
 });
 
 /**

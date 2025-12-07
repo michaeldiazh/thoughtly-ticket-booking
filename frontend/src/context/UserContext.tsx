@@ -4,11 +4,11 @@
  */
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { User } from '../types/user';
+import type { SimplifiedUser } from '../types/user';
 
 interface UserContextType {
-  selectedUser: User | null;
-  setSelectedUser: (user: User | null) => void;
+  selectedUser: SimplifiedUser | null;
+  setSelectedUser: (user: SimplifiedUser | null) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -22,7 +22,7 @@ interface UserProviderProps {
  * Wraps the app and provides user state to all children
  */
 export function UserProvider({ children }: UserProviderProps) {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<SimplifiedUser | null>(null);
 
   return (
     <UserContext.Provider value={{ selectedUser, setSelectedUser }}>

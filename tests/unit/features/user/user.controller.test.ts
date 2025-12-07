@@ -70,6 +70,17 @@ describe('UserController', () => {
         region: 'NY',
         countryCode: 'US',
         timezone: 'America/New_York',
+        userTickets: [
+          {
+            userTicketId: 1,
+            eventName: 'Summer Concert',
+            venueName: 'Madison Square Garden',
+            tier: 'VIP',
+            ticketAmount: 2,
+            totalPrice: 200.00,
+            datePurchased: '2024-07-15T14:30:00Z',
+          },
+        ],
       }),
     } as unknown as jest.Mocked<UserService>;
 
@@ -150,6 +161,17 @@ describe('UserController', () => {
           region: 'NY',
           countryCode: 'US',
           timezone: 'America/New_York',
+          userTickets: [
+            {
+              userTicketId: 1,
+              eventName: 'Summer Concert',
+              venueName: 'Madison Square Garden',
+              tier: 'VIP',
+              ticketAmount: 2,
+              totalPrice: 200.00,
+              datePurchased: '2024-07-15T14:30:00Z',
+            },
+          ],
         },
       });
     });
@@ -192,6 +214,7 @@ describe('UserController', () => {
         region: 'CA',
         countryCode: 'US',
         timezone: 'America/Los_Angeles',
+        userTickets: [],
       });
 
       await controller.getUserById(mockReq as Request, mockRes as Response);

@@ -1,0 +1,96 @@
+.events-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.events-header {
+  margin-bottom: 2rem;
+}
+
+.events-header h1 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.user-greeting {
+  color: #666;
+  font-size: 1rem;
+}
+
+.events-table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.events-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.events-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.events-table th:last-child {
+  text-align: center;
+}
+
+.events-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.events-table tbody tr:hover {
+  background-color: #f8f9ff;
+}
+
+.events-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.events-table td {
+  padding: 1rem;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.error-message {
+  color: #d32f2f;
+}
+
+.no-events {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+@media (max-width: 1200px) {
+  .events-table-container {
+    overflow-x: auto;
+  }
+
+  .events-table {
+    min-width: 1000px;
+  }
+}

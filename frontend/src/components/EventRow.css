@@ -1,0 +1,44 @@
+.event-name {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.event-description {
+  color: #666;
+  max-width: 300px;
+}
+
+.venue-name {
+  font-weight: 500;
+}
+
+.location {
+  color: #666;
+}
+
+.date,
+.start-time,
+.end-time {
+  color: #666;
+  white-space: nowrap;
+}
+
+.action-cell {
+  text-align: center;
+}
+
+.view-button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.view-button:hover {
+  background: #5568d3;
+}

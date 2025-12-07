@@ -399,6 +399,68 @@ The frontend uses React Context for global user state management, state-based na
 
 The backend is completely stateless - no server-side session storage. This design enables horizontal scaling, as any instance can handle any request without needing to share session state.
 
+## Trade-offs
+
+### Database Query Method: `query()` vs `execute()`
+
+**Choice**: We use `mysql2`'s `query()` method instead of `execute()`.
+
+**Trade-off**: 
+- **Pros**: `query()` handles dynamic `IN` clauses with arrays more naturally, making query builders more flexible for filtering
+- **Cons**: Slightly less strict parameterization compared to `execute()`, though we still use parameterized queries for security
+
+**Rationale**: The flexibility for dynamic filtering (e.g., `WHERE id IN (?)` with arrays) outweighs the minor security difference, as we still use parameterized queries.
+
+### Transaction Isolation: READ COMMITTED
+
+**Choice**: Transactions use `READ COMMITTED` isolation level.
+
+**Trade-off**:
+- **Pros**: Allows transactions to see committed changes immediately, reducing lock contention and improving concurrency
+- **Cons**: Slightly weaker consistency guarantees compared to `REPEATABLE READ` or `SERIALIZABLE`
+
+**Rationale**: For our booking system, we need to see the latest `remaining` count to prevent over-booking. `READ COMMITTED` with row-level locking provides the right balance of consistency and performance.
+
+### Frontend Navigation: State-based vs React Router
+
+**Choice**: State-based navigation using React state instead of React Router.
+
+**Trade-off**:
+- **Pros**: No external dependency, simpler setup, smaller bundle size
+- **Cons**: Manual state management, no URL-based navigation, browser back/forward doesn't work
+
+**Rationale**: For a simple application with a linear flow (welcome → events → detail → confirmation), state-based navigation is sufficient and keeps the stack minimal.
+
+### Validation: Zod Runtime Validation
+
+**Choice**: Zod for runtime validation with TypeScript type inference.
+
+**Trade-off**:
+- **Pros**: Type safety from schema to runtime, rich error messages, single source of truth
+- **Cons**: Runtime overhead for validation, additional dependency
+
+**Rationale**: The type safety and validation benefits outweigh the minimal runtime cost, especially for API input validation where correctness is critical.
+
+### Concurrency Control: Database Transactions vs Application-Level Locking
+
+**Choice**: Database transactions with row-level locking for double-booking prevention.
+
+**Trade-off**:
+- **Pros**: Simple, reliable, leverages database ACID guarantees, no need for distributed locking
+- **Cons**: Database becomes a potential bottleneck under extreme load, requires careful transaction design
+
+**Rationale**: For a single-database system, transaction-based locking is the most reliable approach. To scale writes, you'd need distributed locking (e.g., Redis) or database clustering, which adds complexity. For this system's scale, single-database transactions are sufficient.
+
+### Architecture: Feature-Based vs Layer-Based
+
+**Choice**: Feature-based organization over traditional layer-based (controllers/, services/, models/).
+
+**Trade-off**:
+- **Pros**: Better discoverability, easier to scale features independently, clearer ownership
+- **Cons**: Potential for code duplication across features, less obvious shared patterns
+
+**Rationale**: For a multi-feature system, feature-based organization makes it easier to understand and maintain. Shared utilities in `src/shared/` prevent unnecessary duplication.
+
 ## License
 
 ISC

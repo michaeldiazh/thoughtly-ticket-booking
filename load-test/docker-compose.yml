@@ -1,0 +1,83 @@
+# Docker Compose Configuration for Load Testing
+# 
+# This file defines 3 services that work together:
+# 1. mysql - The database (MySQL 8.4)
+# 2. backend - Your Node.js backend service
+# 3. k6 - The load testing tool
+#
+# Docker Compose automatically creates a network so services can talk to each other
+# by using their service names as hostnames (e.g., "mysql" instead of "localhost")
+
+# Docker Compose Configuration for Load Testing
+# Note: version is obsolete in newer Docker Compose versions
+
+services:
+  # Service 1: MySQL 8.4 Database
+  # This is a pre-built image from Docker Hub - no Dockerfile needed!
+  mysql:
+    image: mysql:8.4
+    container_name: load-test-mysql
+    environment:
+      # These environment variables configure MySQL
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: thoughtly_ticket_booking
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      # Expose MySQL port so you can connect from your laptop if needed
+      - "3307:3306"  # Host:Container (use 3307 to avoid conflict with local MySQL)
+    volumes:
+      # Mount the schema file so it runs on startup
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      # Wait for MySQL to be ready before starting other services
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - load-test-network
+
+  # Service 2: Backend Service
+  # This uses a Dockerfile to build your Node.js app
+  backend:
+    build:
+      context: ..  # Build from project root (one level up)
+      dockerfile: load-test/Dockerfile.backend
+    container_name: load-test-backend
+    depends_on:
+      mysql:
+        condition: service_healthy  # Wait for MySQL to be healthy
+    environment:
+      # Connect to MySQL using the service name "mysql" as hostname
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: app_user
+      DB_PASSWORD: app_password
+      DB_NAME: thoughtly_ticket_booking
+      NODE_ENV: production
+    ports:
+      - "3001:3000"  # Expose backend API (3001 on host -> 3000 in container)
+    networks:
+      - load-test-network
+
+  # Service 3: k6 Load Testing
+  # This uses the official k6 image - no Dockerfile needed!
+  k6:
+    image: grafana/k6:latest
+    container_name: load-test-k6
+    depends_on:
+      backend:
+        condition: service_started  # Wait for backend to start
+    volumes:
+      # Mount the k6 test script
+      - ./k6:/scripts
+    command: run /scripts/booking-load-test.js
+    networks:
+      - load-test-network
+
+# Define a network so all services can communicate
+networks:
+  load-test-network:
+    driver: bridge
+

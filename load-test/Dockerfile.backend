@@ -1,0 +1,42 @@
+# Dockerfile for Backend Service
+# 
+# This builds a container with:
+# - Node.js 16
+# - Your backend code
+# - Dependencies installed
+# - Server ready to run
+
+# Step 1: Use Node.js 16 base image
+# This gives us Node.js 16 + npm pre-installed
+FROM node:16
+
+# Step 2: Set working directory inside container
+# All commands run from this directory
+WORKDIR /app
+
+# Step 3: Copy package files first (for better Docker layer caching)
+# Docker caches layers - if package.json doesn't change, 
+# it won't reinstall dependencies
+COPY package*.json ./
+
+# Step 4: Install all dependencies (including dev dependencies for TypeScript build)
+RUN npm ci
+
+# Step 5: Copy source code
+# Copy everything from project root (context is .. from docker-compose.yml)
+COPY . .
+
+# Step 6: Build TypeScript to JavaScript
+RUN npm run build
+
+# Step 7: Remove dev dependencies to reduce image size (optional optimization)
+# We keep them for now since Express 5 might have engine requirements
+# RUN npm prune --production
+
+# Step 8: Expose the port your app runs on
+EXPOSE 3000
+
+# Step 9: Command to run when container starts
+# This starts your backend server
+CMD ["npm", "start"]
+

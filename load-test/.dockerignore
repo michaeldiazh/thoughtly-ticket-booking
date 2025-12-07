@@ -1,0 +1,50 @@
+# Docker ignore file for backend build
+# This prevents copying unnecessary files into the Docker image
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Test files (not needed in production container)
+tests/
+*.test.ts
+*.test.js
+jest.config.js
+
+# Frontend (not needed for backend load testing)
+frontend/
+
+# Documentation
+docs/
+*.md
+README.md
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Load test directory (don't copy into itself)
+load-test/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+

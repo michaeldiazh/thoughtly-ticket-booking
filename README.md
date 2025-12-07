@@ -9,7 +9,7 @@ This is an end-to-end ticket booking application with a React + TypeScript front
 ## Tech Stack
 
 - **Backend:** Node.js 16 + TypeScript
-- **Frontend:** React + TypeScript (to be implemented)
+- **Frontend:** React + TypeScript (Vite)
 - **Database:** MySQL 8.4
 - **Runtime:** Node.js 16.x
 
@@ -20,10 +20,11 @@ This is an end-to-end ticket booking application with a React + TypeScript front
 - Node.js 16.x installed
 - npm or yarn package manager
 - MySQL 8.4 (for production, can use in-memory for development)
+- Docker and Docker Compose (for integration testing and load testing)
 
-### Installation
+### Backend Setup
 
-1. Install dependencies:
+1. Install backend dependencies:
 ```bash
 npm install
 ```
@@ -33,19 +34,56 @@ npm install
 npm run build
 ```
 
-3. Run in development mode:
+3. Run backend in development mode:
 ```bash
 npm run dev
 ```
 
-4. Run in production mode (after build):
+4. Run backend in production mode (after build):
 ```bash
 npm start
 ```
 
-### Running the Service
+The backend server runs on `http://localhost:3000` by default.
 
-Once the service is running (in development or production mode), you can test the API endpoints. The server runs on `http://localhost:3000` by default.
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install frontend dependencies:
+```bash
+npm install
+```
+
+3. Run frontend in development mode:
+```bash
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173` (Vite default port).
+
+4. Build frontend for production:
+```bash
+npm run build
+```
+
+### Running the Full Application
+
+1. Start MySQL database (ensure it's running on the configured port)
+2. Start the backend server (from project root):
+   ```bash
+   npm run dev
+   ```
+3. Start the frontend (in a separate terminal, from `frontend/` directory):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+The frontend will automatically connect to the backend API at `http://localhost:3000`.
 
 **Example: Get all available tickets**
 ```bash
@@ -112,9 +150,21 @@ thoughtly-ticket-booking/
 │   │   └── shared/         # Shared utility tests
 │   └── integration/         # Integration tests
 │       └── features/       # Feature-based integration tests
+├── frontend/                 # React + TypeScript frontend application
+│   ├── src/                 # Frontend source files
+│   │   ├── components/      # Reusable React components
+│   │   ├── context/         # React Context providers
+│   │   ├── pages/           # Page components
+│   │   ├── services/        # API service layer
+│   │   └── types/           # TypeScript type definitions
+│   └── package.json         # Frontend dependencies
+├── load-test/               # Load testing setup (k6 + Docker Compose)
+│   ├── k6/                  # k6 load test scripts
+│   ├── scripts/             # Database initialization scripts
+│   └── docker-compose.yml   # Docker Compose configuration
 ├── dist/                     # Compiled JavaScript (generated)
 ├── docs/                     # Documentation and database schema
-├── package.json             # Dependencies and scripts
+├── package.json             # Backend dependencies and scripts
 ├── tsconfig.json            # TypeScript configuration
 └── README.md                # This file
 ```
@@ -161,6 +211,19 @@ thoughtly-ticket-booking/
 - ✅ **TBS-8**: Setup app directory structure for application configuration and bootstrap
 - ✅ **TBS-9**: Reorganized event DTOs to event feature directory structure
 - ✅ **TBS-10**: Implemented event endpoints (GET /api/v1/event, GET /api/v1/event/:id) with comprehensive unit and integration tests
+- ✅ **TBS-11**: Implemented user feature (GET /api/v1/user, GET /api/v1/user/:id) with user ticket aggregation and comprehensive testing
+- ✅ **TBS-12**: Added CORS middleware to enable frontend-backend communication
+- ✅ **TBS-13**: Created shared Zod schemas and validators for reusable validation patterns
+- ✅ **TBS-14**: Refactored event feature to feature-based structure with shared utilities
+- ✅ **TBS-15**: Initialized React + TypeScript frontend application with Vite
+- ✅ **TBS-16**: Built welcome page with user selection dropdown and global user state management (React Context)
+- ✅ **TBS-17**: Created events listing page with event rows and navigation to event details
+- ✅ **TBS-18**: Implemented event detail page with tier selection, quantity input, and booking form
+- ✅ **TBS-19**: Integrated frontend with backend APIs (events, users, booking endpoints)
+- ✅ **TBS-20**: Built booking confirmation page with ticket details and navigation flow
+- ✅ **TBS-21**: Enhanced user ticket endpoint to include event and venue information in booking response
+- ✅ **TBS-22**: Created comprehensive load testing setup with k6 and Docker Compose
+- ✅ **TBS-23**: Validated performance requirements (p95 < 500ms) and double-booking prevention through load testing
 
 ## Design Decisions & Trade-offs
 
@@ -181,7 +244,7 @@ The complete database schema SQL can be found in [`docs/schema.sql`](docs/schema
 
 #### Notes & Acknowledgements
 
-- **Normalization**: The schema follows Third Normal Form (3NF) / Boyce-Codd Normal Form (BCNF) to ensure data integrity and eliminate redundancy.
+- **Normalization**: The schema follows Third Normal Form (3NF) to ensure data integrity and eliminate redundancy.
 - **Historical Data Preservation**: The `user_ticket.unit_price` field stores the price at the time of purchase, preserving historical pricing even if ticket prices change.
 - **Event-Specific Pricing**: The `ticket.price` field allows for event-specific pricing that may differ from the `price_tier.default_price`, enabling flexible pricing strategies.
 - **Concurrency Control**: Using atomic updates on the `ticket` table prevents two users from accessing the same ticket type simultaneously. The following SQL query locks the ticket row such that two users cannot update the same ticket type:
@@ -231,17 +294,13 @@ The application follows a **feature-based architecture** with clear separation o
 
 #### Feature-Based Structure
 
-Each feature (e.g., `ticket`, `user-ticket`) is self-contained with:
-- **API Layer** (`api/`): Controllers and route definitions
-- **Domain Layer** (`domain/`): DTOs, types, and domain-specific logic
-- **Service Layer** (`service/`): Business logic and orchestration
-- **Query Layer** (`queries/`): SQL query builders
+Each feature (e.g., `ticket`, `user-ticket`, `event`, `user`) is self-contained with:
+- Controllers and routes (`*.controller.ts`, `*.routes.ts`): API endpoints
+- Types (`*.types.ts`): Zod schemas and TypeScript types
+- Services (`*.service.ts`): Business logic and orchestration
+- Queries (`queries/`): SQL query builders
 
-This structure provides:
-- **Discoverability**: All code related to a feature is in one place
-- **Maintainability**: Easy to locate and modify feature-specific code
-- **Scalability**: New features can be added without affecting existing ones
-- **Testability**: Feature tests mirror the source structure
+This structure provides discoverability, maintainability, and testability by keeping all feature-related code in one place.
 
 #### Application Setup
 
@@ -266,14 +325,8 @@ Services are injected into controllers via constructor injection, making the cod
 **Database Queries**: We use `mysql2`'s `query()` method (instead of `execute()`) to properly handle dynamic `IN` clauses with arrays. The query builder uses parameterized queries for security while supporting flexible filtering.
 
 **Testing**: 
-- **Unit Tests**: Located in `tests/unit/features/` mirroring the feature structure, using mocks for isolated testing
-  - **Event Feature**: Comprehensive unit tests for `EventController`, `EventService`, and query builders (`get-events.query`, `get-event-by-id.query`)
-  - **Ticket Feature**: Unit tests for controllers, services, and query builders
-  - **User Ticket Feature**: Unit tests for services and query builders
-- **Integration Tests**: Located in `tests/integration/features/`, using testcontainers with MySQL 8.4 to run tests against a real database
-  - **Event Feature**: Integration tests for `EventService` covering filtering, pagination, and data validation
-  - **Ticket Feature**: Integration tests for `TicketService` with real database queries
-  - **User Ticket Feature**: Integration tests for concurrency control and booking scenarios
+- **Unit Tests**: Located in `tests/unit/features/` mirroring the feature structure, using mocks for isolated testing. All features (event, ticket, user, user-ticket) have unit tests for controllers, services, and query builders.
+- **Integration Tests**: Located in `tests/integration/features/`, using testcontainers with MySQL 8.4 to run tests against a real database. All features have service-level integration tests covering real database queries, data validation, and business logic (including concurrency control for user-ticket bookings).
 
 **Running Tests**:
 ```bash
@@ -292,6 +345,59 @@ npm run test:watch
 # Run tests with coverage
 npm run test:coverage
 ```
+
+### Load Testing
+
+The project includes a comprehensive load testing setup using k6 and Docker Compose. This validates the system's performance under concurrent load and demonstrates double-booking prevention.
+
+**Load Test Results:**
+- **Performance:** p95 latency = 3.43ms (requirement: <500ms) ✅
+- **Throughput:** ~309 requests/second
+- **Concurrency:** Tested with 500 virtual users (scaled down from 50,000 requirement)
+- **Double-Booking Prevention:** Validated through concurrent booking attempts
+
+For detailed load testing documentation, setup instructions, and results, see [`load-test/README.md`](load-test/README.md).
+
+**Quick Start (Load Testing):**
+```bash
+cd load-test
+docker-compose up --build
+```
+
+### Database Connection Management
+
+**Connection Pooling**: The `MySQLConnector` uses `mysql2`'s connection pool with configurable limits (default: 10 connections). This prevents connection exhaustion and improves performance by reusing connections.
+
+**Transaction Isolation**: Transactions use `READ COMMITTED` isolation level, which allows each transaction to see committed changes from other transactions. This is appropriate for our concurrency control with row-level locking, where we need to see the latest committed `remaining` count before attempting to update.
+
+**Query Method Choice**: We use `mysql2`'s `query()` method instead of `execute()` to properly handle dynamic `IN` clauses with arrays. The `query()` method uses `mysql.format()` internally, which correctly handles array parameters for SQL `IN` clauses, making our query builders more flexible.
+
+### Concurrency Control
+
+**Atomic Updates with Row-Level Locking**: Double-booking prevention is achieved through atomic database updates within transactions. The booking flow:
+1. Begins a transaction with `READ COMMITTED` isolation
+2. Atomically decrements `remaining` count with condition `remaining >= :qty`
+3. Checks `affectedRows` - if 0, tickets were insufficient (another transaction got them first)
+4. Rolls back on failure, commits on success
+
+This approach ensures:
+- No race conditions: MySQL's row-level locking prevents concurrent updates to the same ticket row
+- No negative counts: The `remaining >= :qty` condition prevents going below zero
+- Transactional integrity: If any step fails (e.g., user ticket insertion), the entire transaction rolls back
+
+### Frontend Architecture
+
+The frontend uses React Context for global user state management, state-based navigation (no React Router), and a centralized API service layer using the Fetch API for backend communication.
+
+### Error Handling
+
+**Centralized Error Handling**: All errors are handled through a centralized `handleError` middleware that converts domain errors to appropriate HTTP responses with proper status codes (400, 404, 409, 500).
+
+**Validation Error Conversion**: Zod validation errors are converted to `InvalidRequestError` or `InvalidQueryParameterError` with field-level details, providing clear feedback to API consumers.
+
+### Stateless Design
+
+The backend is completely stateless - no server-side session storage. This design enables horizontal scaling, as any instance can handle any request without needing to share session state.
 
 ## License
 

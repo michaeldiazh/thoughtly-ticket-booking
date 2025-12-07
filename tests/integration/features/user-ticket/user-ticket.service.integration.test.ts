@@ -46,6 +46,20 @@ describe('UserTicketService Integration Tests', () => {
       expect(result.unitPrice).toBeGreaterThan(0);
       expect(result.totalPrice).toBe(result.unitPrice * result.ticketAmount);
       expect(result.datePurchased).toBeDefined();
+      
+      // Verify new fields from JOINs
+      expect(result.eventName).toBeDefined();
+      expect(typeof result.eventName).toBe('string');
+      expect(result.eventName.length).toBeGreaterThan(0);
+      expect(result.venueName).toBeDefined();
+      expect(typeof result.venueName).toBe('string');
+      expect(result.venueName.length).toBeGreaterThan(0);
+      expect(result.startTime).toBeDefined();
+      expect(typeof result.startTime).toBe('string');
+      expect(result.startTime).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
+      expect(result.endTime).toBeDefined();
+      expect(typeof result.endTime).toBe('string');
+      expect(result.endTime).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
     });
 
     it('should prevent two users from booking the same ticket simultaneously', async () => {

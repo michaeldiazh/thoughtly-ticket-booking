@@ -12,6 +12,9 @@ describe('buildGetUserTicketQuery', () => {
     // Verify SQL structure
     expect(result.sql).toContain('SELECT');
     expect(result.sql).toContain('FROM user_ticket ut');
+    expect(result.sql).toContain('INNER JOIN ticket t');
+    expect(result.sql).toContain('INNER JOIN event e');
+    expect(result.sql).toContain('INNER JOIN venue v');
     expect(result.sql).toContain('WHERE ut.id = ?');
   });
 
@@ -24,7 +27,11 @@ describe('buildGetUserTicketQuery', () => {
     expect(result.sql).toContain('ut.user_id as \'userId\'');
     expect(result.sql).toContain('ut.unit_price as \'unitPrice\'');
     expect(result.sql).toContain('ut.ticket_amount as \'ticketAmount\'');
-    expect(result.sql).toContain('ut.date_purchased as \'datePurchased\'');
+    expect(result.sql).toContain('datePurchased');
+    expect(result.sql).toContain('e.name as \'eventName\'');
+    expect(result.sql).toContain('v.name as \'venueName\'');
+    expect(result.sql).toContain('startTime');
+    expect(result.sql).toContain('endTime');
   });
 
   it('should calculate totalPrice as unit_price * ticket_amount', () => {
@@ -51,17 +58,21 @@ describe('buildGetUserTicketQuery', () => {
     expect(placeholderCount).toBe(result.params.length);
   });
 
-  it('should use table alias ut for all columns', () => {
+  it('should use table aliases correctly for all columns', () => {
     const bookingId = 222;
     const result = buildGetUserTicketQuery(bookingId);
 
-    // All column references should use the ut alias
+    // All column references should use proper aliases
     expect(result.sql).toContain('ut.id');
     expect(result.sql).toContain('ut.ticket_id');
     expect(result.sql).toContain('ut.user_id');
     expect(result.sql).toContain('ut.unit_price');
     expect(result.sql).toContain('ut.ticket_amount');
     expect(result.sql).toContain('ut.date_purchased');
+    expect(result.sql).toContain('e.name');
+    expect(result.sql).toContain('v.name');
+    expect(result.sql).toContain('e.start_time');
+    expect(result.sql).toContain('e.end_time');
   });
 
   it('should return QueryResult with sql and params', () => {
@@ -100,6 +111,10 @@ describe('buildGetUserTicketQuery', () => {
     expect(result.sql).toContain('ticketAmount');
     expect(result.sql).toContain('totalPrice');
     expect(result.sql).toContain('datePurchased');
+    expect(result.sql).toContain('eventName');
+    expect(result.sql).toContain('venueName');
+    expect(result.sql).toContain('startTime');
+    expect(result.sql).toContain('endTime');
   });
 });
 

@@ -112,3 +112,48 @@ export async function getUsers(): Promise<ApiResponse<SimplifiedUser[]>> {
 
   return response.json();
 }
+
+/**
+ * Book tickets (create user ticket)
+ */
+export interface BookTicketRequest {
+  ticketId: number;
+  userId: number;
+  quantity: number;
+}
+
+export interface UserTicket {
+  id: number;
+  ticketId: number;
+  userId: number;
+  unitPrice: number;
+  ticketAmount: number;
+  totalPrice: number;
+  datePurchased: string;
+  eventName: string;
+  venueName: string;
+  startTime: string;
+  endTime: string;
+}
+
+export async function bookTicket(request: BookTicketRequest): Promise<ApiResponse<UserTicket>> {
+  const url = `${API_BASE_URL}/user/ticket`;
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ticketId: request.ticketId,
+      userId: request.userId,
+      quantity: request.quantity,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}

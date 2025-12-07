@@ -5,22 +5,25 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
-import { getEventById } from '../services/api';
+import { getEventById, bookTicket, type UserTicket } from '../services/api';
 import type { Event } from '../types/event';
 import './EventDetailPage.css';
 
 interface EventDetailPageProps {
   eventId: number;
   onBack: () => void;
+  onBookingSuccess: (ticket: UserTicket) => void;
 }
 
-export function EventDetailPage({ eventId, onBack }: EventDetailPageProps) {
+export function EventDetailPage({ eventId, onBack, onBookingSuccess }: EventDetailPageProps) {
   const { selectedUser } = useUser();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTierCode, setSelectedTierCode] = useState<string>('');
   const [quantity, setQuantity] = useState<string>('1');
+  const [booking, setBooking] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadEvent = async () => {
@@ -69,25 +72,38 @@ export function EventDetailPage({ eventId, onBack }: EventDetailPageProps) {
     return numPrice.toFixed(2);
   };
 
-  const handleBuyTickets = () => {
-    if (!selectedTierCode || !event?.tiers) return;
+  const handleBuyTickets = async () => {
+    if (!selectedTierCode || !event?.tiers || !selectedUser) return;
     
     const tier = event.tiers[selectedTierCode];
     const qty = Number(quantity);
     
     if (qty <= 0 || qty > tier.remaining) {
-      alert(`Invalid quantity. Available: ${tier.remaining}`);
+      setBookingError(`Invalid quantity. Available: ${tier.remaining}`);
       return;
     }
 
-    // TODO: Implement booking logic
-    console.log('Booking tickets:', {
-      ticketId: tier.ticketId,
-      userId: selectedUser?.id,
-      quantity: qty,
-    });
-    
-    alert(`Booking ${qty} ticket(s) for ${selectedTierCode} tier`);
+    try {
+      setBooking(true);
+      setBookingError(null);
+      
+      const response = await bookTicket({
+        ticketId: tier.ticketId,
+        userId: selectedUser.id,
+        quantity: qty,
+      });
+
+      if (response.status === 'OK' && response.data) {
+        onBookingSuccess(response.data);
+      } else {
+        setBookingError(response.error?.message || 'Failed to book tickets');
+      }
+    } catch (err) {
+      console.error('Error booking tickets:', err);
+      setBookingError(err instanceof Error ? err.message : 'Failed to book tickets');
+    } finally {
+      setBooking(false);
+    }
   };
 
   if (loading) {
@@ -235,12 +251,17 @@ export function EventDetailPage({ eventId, onBack }: EventDetailPageProps) {
                 </div>
               </div>
 
+              {bookingError && (
+                <div className="booking-error">
+                  Error: {bookingError}
+                </div>
+              )}
               <button
                 className="buy-button"
                 onClick={handleBuyTickets}
-                disabled={!selectedTier || !quantity || Number(quantity) < 1 || Number(quantity) > maxQuantity}
+                disabled={!selectedTier || !quantity || Number(quantity) < 1 || Number(quantity) > maxQuantity || booking || !selectedUser}
               >
-                Buy Tickets
+                {booking ? 'Processing...' : 'Buy Tickets'}
               </button>
             </div>
           )}

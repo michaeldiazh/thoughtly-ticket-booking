@@ -61,7 +61,11 @@ describe('UserTicketService', () => {
       unitPrice: 50.00,
       ticketAmount: 2,
       totalPrice: 100.00,
-      datePurchased: '2024-01-15T14:30:00.000Z',
+      datePurchased: '2024-01-15T14:30:00Z',
+      eventName: 'Summer Concert',
+      venueName: 'Madison Square Garden',
+      startTime: '2024-07-15T19:00:00Z',
+      endTime: '2024-07-15T22:00:00Z',
     };
 
     const mockUpdateQuery = {
@@ -113,7 +117,11 @@ describe('UserTicketService', () => {
           unitPrice: '50.00',
           ticketAmount: 2,
           totalPrice: '100.00',
-          datePurchased: '2024-01-15 14:30:00.000',
+          datePurchased: '2024-01-15T14:30:00Z',
+          eventName: 'Summer Concert',
+          venueName: 'Madison Square Garden',
+          startTime: '2024-07-15T19:00:00Z',
+          endTime: '2024-07-15T22:00:00Z',
         },
       ];
 
@@ -281,7 +289,11 @@ describe('UserTicketService', () => {
           unitPrice: '25.50',
           ticketAmount: 5,
           totalPrice: '127.50',
-          datePurchased: '2024-01-20 10:00:00.000',
+          datePurchased: '2024-01-20T10:00:00Z',
+          eventName: 'Winter Festival',
+          venueName: 'Red Rocks',
+          startTime: '2024-12-20T18:00:00Z',
+          endTime: '2024-12-20T23:00:00Z',
         },
       ];
 

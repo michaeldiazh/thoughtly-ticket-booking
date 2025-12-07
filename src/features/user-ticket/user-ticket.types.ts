@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { iso8601DatetimeSchema, positivePriceSchema, positiveIntIdSchema } from '../../shared/validator';
+import { iso8601DatetimeSchema, positivePriceSchema, positiveIntIdSchema, nonEmptyStringSchema } from '../../shared/validator';
 
 /**
  * Zod schema for UserTicketRequest
@@ -35,6 +35,10 @@ export const UserTicketSchema = z.object({
   ticketAmount: positiveIntIdSchema,
   totalPrice: positivePriceSchema,
   datePurchased: iso8601DatetimeSchema,
+  eventName: nonEmptyStringSchema,
+  venueName: nonEmptyStringSchema,
+  startTime: iso8601DatetimeSchema,
+  endTime: iso8601DatetimeSchema,
 });
 
 /**
